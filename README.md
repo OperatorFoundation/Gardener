@@ -1,3 +1,3 @@
 # Gardener
 
-A description of this package.
+A swift library for managing remote servers
