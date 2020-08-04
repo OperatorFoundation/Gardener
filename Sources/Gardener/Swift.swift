@@ -34,7 +34,7 @@ public class Swift
 
         let tarline = String(data.string.split(separator: "\n")[0])
         let dirname = String(tarline.split(separator: " ")[8])
-        Gardener.swiftPath = dirname
+        Gardener.instance.swiftPath = dirname
         
         return true
     }

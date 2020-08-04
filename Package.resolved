@@ -1,0 +1,43 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Chord",
+        "repositoryURL": "https://github.com/OperatorFoundation/Chord",
+        "state": {
+          "branch": null,
+          "revision": "4b190f447aa6db746a0e1643aaf8ea9f56a834c1",
+          "version": "0.0.3"
+        }
+      },
+      {
+        "package": "Datable",
+        "repositoryURL": "https://github.com/OperatorFoundation/Datable",
+        "state": {
+          "branch": null,
+          "revision": "1c23f2b72d0d0cf4386fad05f8a5db4b91e8d304",
+          "version": "3.0.2"
+        }
+      },
+      {
+        "package": "Song",
+        "repositoryURL": "https://github.com/OperatorFoundation/Song",
+        "state": {
+          "branch": null,
+          "revision": "e28ac4620ba3216c9b45bc306c40b63c13f68685",
+          "version": "0.0.23"
+        }
+      },
+      {
+        "package": "swift-ast",
+        "repositoryURL": "https://github.com/yanagiba/swift-ast",
+        "state": {
+          "branch": null,
+          "revision": "e8507d78b32dbd33ea5ea975bbbc82b7613870a1",
+          "version": "0.19.9"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

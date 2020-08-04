@@ -11,15 +11,29 @@ public class Command
 {
     var path: [String]
     
+    static var defaultPath: [String] = [
+        "/usr/local/bin",
+        "/usr/bin",
+        "/bin",
+        "/usr/sbin",
+        "/sbin"
+    ]
+    
+    static public func addDefaultPath(_ item: String)
+    {
+        defaultPath.append(item)
+    }
+    
+    static public var swiftPath: String?
+    
     public init()
     {
-        self.path = [
-            "/usr/local/bin",
-            "/usr/bin",
-            "/bin",
-            "/usr/sbin",
-            "/sbin"
-        ]
+        self.path = Command.defaultPath
+        
+        if let swiftPath = Command.swiftPath
+        {
+            self.path.append(swiftPath)
+        }
     }
     
     public func cd(_ path: String) -> Bool
