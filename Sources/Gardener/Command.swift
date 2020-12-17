@@ -43,12 +43,13 @@ public class Command
         return FileManager.default.changeCurrentDirectoryPath(path)
     }
     
-    public func run(_ command: String, _ args: String...) -> (Int32, Data)?
+    public func run(_ command: String, _ args: String...) -> (Int32, Data, Data)?
     {
         guard command.count > 0 else {return nil}
 
         var absolutePath = command
-        
+
+        var pathFound = false
         if command.first! != "/"
         {
             for attempt in path
@@ -56,22 +57,63 @@ public class Command
                 absolutePath = attempt + "/" + command
                 if FileManager.default.fileExists(atPath: absolutePath)
                 {
+                    pathFound = true
                     break
                 }
             }
-            
+        }
+
+        guard pathFound else {return nil}
+        
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        let process = Process.init()
+        process.executableURL = URL(fileURLWithPath: absolutePath)
+        process.arguments = args
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+        process.currentDirectoryPath = FileManager.default.currentDirectoryPath
+
+        let queue = DispatchQueue(label: "childProcessOutput", attributes: .concurrent)
+
+        let stdoutLock = DispatchGroup()
+        let stdoutHandle = stdoutPipe.fileHandleForReading
+        var stdoutData: Data? = nil
+        stdoutLock.enter()
+        queue.async
+        {
+            stdoutData = stdoutHandle.readDataToEndOfFile()
+            stdoutLock.leave()
+        }
+
+        let stderrLock = DispatchGroup()
+        let stderrHandle = stderrPipe.fileHandleForReading
+        var stderrData: Data? = nil
+        stderrLock.enter()
+        queue.async
+        {
+            stderrData = stderrHandle.readDataToEndOfFile()
+            stderrLock.leave()
+        }
+
+        do
+        {
+            try process.run()
+        }
+        catch
+        {
             return nil
         }
-        
-        let pipe = Pipe()
-        let process = Process.launchedProcess(launchPath: absolutePath, arguments: args)
-        process.standardOutput = pipe
+
         process.waitUntilExit()
         let exitCode = process.terminationStatus
-        
-        let handle = pipe.fileHandleForReading
-        let data = handle.readDataToEndOfFile()
-        
-        return (exitCode, data)
+
+        stdoutLock.wait()
+        stderrLock.wait()
+
+        guard let resultData = stdoutData else {return nil}
+        guard let errData = stderrData else {return nil}
+
+        return (exitCode, resultData, errData)
     }
 }

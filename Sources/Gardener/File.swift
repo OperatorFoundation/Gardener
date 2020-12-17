@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Files
+public class File
 {
     static public func get(_ path: String) -> Data?
     {
@@ -28,5 +28,10 @@ public class Files
         }
         
         return true
+    }
+
+    static public func exists(_ path: String) -> Bool
+    {
+        return FileManager.default.fileExists(atPath: path)
     }
 }

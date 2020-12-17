@@ -8,11 +8,10 @@
 import Foundation
 import Datable
 
-public class Go
+public class Swift
 {
     var command = Command()
-
-    // FIXME - copied from Swift, needs to be rewritten
+    
     static public func install(os: String) -> Bool
     {
         let baseURL = URL(string: "https://swift.org")!
@@ -45,19 +44,33 @@ public class Go
         return command.cd(path)
     }
     
+    public func initialize() -> (Int32, Data, Data)?
+    {
+        return command.run("swift", "package", "init")
+    }
+    
+    public func update() -> (Int32, Data, Data)?
+    {
+        return command.run("swift", "package", "update")
+    }
+    
+    public func generate() -> (Int32, Data, Data)?
+    {
+        return command.run("swift", "package", "generate-xcodeproj")
+    }
+    
     public func build() -> (Int32, Data, Data)?
     {
-        return command.run("go", "build")
+        return command.run("swift", "build")
     }
     
     public func test() -> (Int32, Data, Data)?
     {
-        return command.run("go", "test")
+        return command.run("swift", "test")
     }
-
-    // FIXME - needs program name argument
+    
     public func run() -> (Int32, Data, Data)?
     {
-        return command.run("go", "run")
+        return command.run("swift", "run")
     }
 }

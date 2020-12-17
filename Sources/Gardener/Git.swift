@@ -16,27 +16,32 @@ public class Git
         return command.cd(path)
     }
     
-    public func initialize() -> (Int32, Data)?
+    public func initialize() -> (Int32, Data, Data)?
     {
         return command.run("git", "init")
     }
-    
-    public func checkout(_ path: String) -> (Int32, Data)?
+
+    public func clone(_ path: String) -> (Int32, Data, Data)?
     {
-        return command.run("git", "checkout", path)
+        return command.run("git", "clone", path)
+    }
+
+    public func checkout(_ branch: String) -> (Int32, Data, Data)?
+    {
+        return command.run("git", "checkout", branch)
     }
     
-    public func pull(_ remote: String, _ branch: String) -> (Int32, Data)?
+    public func pull(_ remote: String, _ branch: String) -> (Int32, Data, Data)?
     {
         return command.run("git", "pull", remote, branch)
     }
     
-    public func push(_ remote: String, _ branch: String) -> (Int32, Data)?
+    public func push(_ remote: String, _ branch: String) -> (Int32, Data, Data)?
     {
         return command.run("git", "push", remote, branch)
     }
     
-    public func addRemote(_ name: String, _ path: String) -> (Int32, Data)?
+    public func addRemote(_ name: String, _ path: String) -> (Int32, Data, Data)?
     {
         return command.run("git", "remote", "add", name, path)
     }
