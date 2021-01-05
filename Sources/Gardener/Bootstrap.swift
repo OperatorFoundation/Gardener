@@ -67,7 +67,6 @@ public struct SwiftVersion
                 ]
             case "20.04":
                 self.dependencies = [
-                    "install",
                     "binutils",
                     "git",
                     "gnupg2",
