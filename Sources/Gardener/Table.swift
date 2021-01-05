@@ -122,15 +122,15 @@ public func fancySplit(string: String, oneSpaceAllowed: Bool = true) -> [String]
     var current = ""
     for character in string
     {
-        if character == " "
+        if character == " " || character == "\t"
         {
             if current == ""
             {
                 continue
             }
-            else if current.last == " "
+            else if current.last == " " || current.last == "\t"
             {
-                current = current.trimmingCharacters(in: [" "])
+                current = current.trimmingCharacters(in: [" ", "\t"])
                 results.append(current)
                 current = ""
             }
@@ -147,9 +147,9 @@ public func fancySplit(string: String, oneSpaceAllowed: Bool = true) -> [String]
 
     if current != ""
     {
-        if current.last == " "
+        if current.last == " " || current.last == "\t"
         {
-            current = current.trimmingCharacters(in: [" "])
+            current = current.trimmingCharacters(in: [" ", "\t"])
         }
 
         results.append(current)
