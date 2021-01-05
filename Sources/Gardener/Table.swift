@@ -76,7 +76,7 @@ public func tabulate(string: String, headers: Bool = true, oneSpaceAllowed: Bool
         {
             firstLine = false
 
-            let fields = fancySplit(string: line)
+            let fields = fancySplit(string: line, oneSpaceAllowed: oneSpaceAllowed)
             for field in fields
             {
                 if headers
@@ -130,13 +130,23 @@ public func fancySplit(string: String, oneSpaceAllowed: Bool = true) -> [String]
             }
             else if current.last == " " || current.last == "\t"
             {
+                // Trim the space off of the end of current
                 current = current.trimmingCharacters(in: [" ", "\t"])
+                
+                // Add current to the results array and reset current
                 results.append(current)
                 current = ""
             }
-            else
+            else if oneSpaceAllowed
             {
                 current.append(character)
+            }
+            else
+            {
+                // One space is not allowed
+                // Add current to the results array and reset current
+                results.append(current)
+                current = ""
             }
         }
         else

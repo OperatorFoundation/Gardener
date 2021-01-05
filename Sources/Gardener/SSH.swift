@@ -105,27 +105,32 @@ public class SSH
     {
         if let knownDigest = sha1sum
         {
-            // File exists
-            if let digest = self.sha1sum(path: outputFilename)
+            // Check if the old file exists
+            if fileExists(path: outputFilename)
             {
-                // Digests match
-                if digest == knownDigest
+                // File exists
+                if let digest = self.sha1sum(path: outputFilename)
                 {
-                    // We're done!
-                    return true
-                }
-                else // Digests don't match
-                {
-                    // Delete old, bad file
-                    rm(path: outputFilename)
+                    // Digests match
+                    if digest == knownDigest
+                    {
+                        // We're done!
+                        return true
+                    }
+                    else // Digests don't match
+                    {
+                        
+                        // Delete old, bad file
+                        let _ = rm(path: outputFilename)
 
-                    // Continue on to download
+                        // Continue on to download
+                    }
                 }
             }
         }
 
         // File does not exist, or had a bad digest and we deleted it.
-        install(package: "wget")
+        let _ = install(package: "wget")
 
         let urlString = url.absoluteString
         guard let (result, _, errData) = remote(command: "wget -O \(outputFilename) \"\(urlString)\"") else {return false}
@@ -183,7 +188,7 @@ public class SSH
 
     public func install(package: String) -> Bool
     {
-        guard let (result, _, errData) = remote(command: "apt install \(package)") else {return false}
+        guard let (result, _, errData) = remote(command: "apt install -y \(package)") else {return false}
         return true
     }
 
@@ -192,12 +197,13 @@ public class SSH
         guard let (result, data, errData) = remote(command: "\(path)/swift -version") else {return nil}
         guard result == 0 else {return nil}
         guard let table = tabulate(string: data.string, headers: false, oneSpaceAllowed: false) else {return nil}
-        return table.columns[0].fields[0]
+        return table.columns[2].fields[0]
     }
 
-    public func swiftRun(path: String, target: String) -> Int32?
+    public func swiftRun(path: String, target: String, pathToSwift: String) -> Int32?
     {
-        guard let (result, _, _) = remote(command: "cd \(path); swift run \(target)") else {return nil}
+        guard let (result, _, _) = remote(command: "cd \(path); \(pathToSwift)/swift run \(target)")
+        else {return nil}
         return result
     }
 

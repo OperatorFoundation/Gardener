@@ -27,7 +27,7 @@ public struct SwiftVersion
         self.dirName = "swift-\(swiftVersion)-RELEASE-ubuntu\(ubuntuVersion)"
         self.tarName = "swift-\(swiftVersion)-RELEASE-ubuntu\(ubuntuVersion).tar.gz"
         self.digest = digest
-        self.versionString = "Swift version \(swiftVersion) (swift-\(swiftVersion)-RELEASE)"
+        self.versionString = swiftVersion
 
         switch ubuntuVersion
         {
@@ -143,7 +143,14 @@ public class Bootstrap
 
             ssh.append(path: ".bashrc", string: "export PATH=\"${PATH}:/root/\(swiftVersion.dirName)/usr/bin\"")
 
-            guard ssh.swiftVersion(path: "/root/\(swiftVersion.dirName)/usr/bin") == swiftVersion.versionString else {return false}
+            let reportedVersion = ssh.swiftVersion(path: "/root/\(swiftVersion.dirName)/usr/bin")
+            guard reportedVersion == swiftVersion.versionString
+            else
+            {
+                print("\n Unable to continue:")
+                print("\(reportedVersion) does not equal \(swiftVersion.versionString)")
+                return false
+            }
         }
 
         guard let sourceURL = URL(string: source) else {return false}
@@ -151,7 +158,7 @@ public class Bootstrap
 
         let package = sourceURL.lastPathComponent
         let installer: String = target ?? "\(package)Installer"
-        ssh.swiftRun(path: package, target: installer)
+        ssh.swiftRun(path: package, target: installer, pathToSwift: "/root/\(swiftVersion.dirName)/usr/bin")
 
         return true
     }
