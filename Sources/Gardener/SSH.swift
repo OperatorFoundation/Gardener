@@ -101,23 +101,26 @@ public class SSH
         }
     }
 
-    public func download(url: URL, outputFilename: String, sha1sum: String) -> Bool
+    public func download(url: URL, outputFilename: String, sha1sum: String? = nil) -> Bool
     {
-        // File exists
-        if let digest = self.sha1sum(path: outputFilename)
+        if let knownDigest = sha1sum
         {
-            // Digests match
-            if digest == sha1sum
+            // File exists
+            if let digest = self.sha1sum(path: outputFilename)
             {
-                // We're done!
-                return true
-            }
-            else // Digests don't match
-            {
-                // Delete old, bad file
-                rm(path: outputFilename)
+                // Digests match
+                if digest == knownDigest
+                {
+                    // We're done!
+                    return true
+                }
+                else // Digests don't match
+                {
+                    // Delete old, bad file
+                    rm(path: outputFilename)
 
-                // Continue on to download
+                    // Continue on to download
+                }
             }
         }
 
@@ -213,5 +216,19 @@ public class SSH
             guard let (result, data, errData) = remote(command: "git clone \(source)") else {return false}
             return true
         }
+    }
+
+    public func lsb_release() -> String?
+    {
+        guard let (result, data, errData) = remote(command: "lsb_release -r") else {return nil}
+        guard result == 0 else {return nil}
+        guard let table = tabulate(string: data.string, headers: false, oneSpaceAllowed: false) else {return nil}
+        return table.columns[1].fields[0]
+    }
+
+    public func gpg_add(keysFile: String) -> Bool
+    {
+        guard let (result, data, errData) = remote(command: "gpg --import all-keys.asc") else {return false}
+        return true
     }
 }
