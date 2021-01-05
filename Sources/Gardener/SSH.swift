@@ -191,6 +191,20 @@ public class SSH
         guard let (result, _, errData) = remote(command: "apt install -y \(package)") else {return false}
         return true
     }
+    
+    public func update() -> Bool
+    {
+        // ErrorCode, stdOut, stdErr
+        guard let (_, _, _) = remote(command: "apt update")
+        else
+        {
+            print("Unable to continue: Failed apt update.")
+            return false
+            
+        }
+        
+        return true
+    }
 
     public func swiftVersion(path: String) -> String?
     {

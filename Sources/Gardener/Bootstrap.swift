@@ -128,6 +128,8 @@ public class Bootstrap
 
         if ssh.swiftVersion(path: "/root/\(swiftVersion.dirName)/usr/bin") != swiftVersion.versionString
         {
+            let _ = ssh.update()
+            
             for dependency in swiftVersion.dependencies
             {
                 ssh.install(package: dependency)
