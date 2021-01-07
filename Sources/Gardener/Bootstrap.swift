@@ -78,7 +78,6 @@ public struct SwiftVersion
                     "libsqlite3-0",
                     "libstdc++-9-dev",
                     "libxml2",
-                    "libz3",
                     "libz3-dev",
                     "pkg-config",
                     "tzdata",

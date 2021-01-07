@@ -8,35 +8,24 @@
 import Foundation
 import Datable
 
-public class Swift
+public class Go
 {
     var command = Command()
-    
-    static public func install(os: String) -> Bool
+
+    static public func install() -> Bool
     {
-        let baseURL = URL(string: "https://swift.org")!
-        let releasesPageURL: URL = baseURL.appendingPathComponent("/download/#releases")
-        guard let releasesPage = try? String(contentsOf: releasesPageURL) else {return false}
-
-        guard let line = releasesPage.findLine(pattern: "ubuntu\(os).tar.gz") else {return false}
-        guard let untrimmedDownloadPath = line.extract(pattern: #"<a href=\"([^\"]+)\">"#) else {return false}
-        let downloadPath = untrimmedDownloadPath.trimmingCharacters(in: CharacterSet(arrayLiteral: "\""))
-            
-        let downloadURL = baseURL.appendingPathComponent(downloadPath)
-        let filename = downloadURL.lastPathComponent
-        let outputURL = URL(fileURLWithPath: filename)
-
-        guard Downloader.download(from: downloadURL, to: outputURL) else {return false}
-        
-        let command = Command()
-        guard let (exitCode, data, errData) = command.run("tar", "zxvf", filename) else {return false}
-        guard exitCode == 0 else {return false}
-
-        let tarline = String(data.string.split(separator: "\n")[0])
-        let dirname = String(tarline.split(separator: " ")[8])
-        Gardener.instance.swiftPath = dirname
-        
+        #if os(Linux)
+        guard let _ = Apt.install("golang")
+        else
+        {
+            print("Failed to install Go")
+            return false
+        }
         return true
+        #else
+        print("Installing go is currently only supported on Linux os.")
+        return false
+        #endif
     }
     
     public func cd(_ path: String) -> Bool
@@ -44,33 +33,86 @@ public class Swift
         return command.cd(path)
     }
     
-    public func initialize() -> (Int32, Data, Data)?
+    public func get(updatePackages: Bool) -> (Int32, Data, Data)?
     {
-        return command.run("swift", "package", "init")
-    }
-    
-    public func update() -> (Int32, Data, Data)?
-    {
-        return command.run("swift", "package", "update")
-    }
-    
-    public func generate() -> (Int32, Data, Data)?
-    {
-        return command.run("swift", "package", "generate-xcodeproj")
+        if updatePackages
+        {
+            return command.run("go", "get", "-u")
+        }
+        else
+        {
+            return command.run("go", "get")
+        }
     }
     
     public func build() -> (Int32, Data, Data)?
     {
-        return command.run("swift", "build")
+        return command.run("go", "build")
     }
     
     public func test() -> (Int32, Data, Data)?
     {
-        return command.run("swift", "test")
+        return command.run("go", "test")
     }
-    
+
+    // FIXME - needs program name argument
     public func run() -> (Int32, Data, Data)?
     {
-        return command.run("swift", "run")
+        return command.run("go", "run")
+    }
+    
+    /// Clones repository, checks out the correct branch, and builds
+    /// Returns: The path to the built target
+    public func buildFromRepository(repositoryPath: String, branch: String, target: String) -> String?
+    {
+        let git = Git()
+        
+        guard let repositoryURL = URL(string: repositoryPath)
+        else
+        {
+            print("Invalid repository path \(repositoryPath)")
+            return nil
+        }
+        
+        let repositoryName = repositoryURL.deletingPathExtension().lastPathComponent
+        
+        guard let _ = git.clone(repositoryPath)
+        else
+        {
+            print("Unable to clone \(repositoryPath)")
+            return nil
+        }
+        
+        guard git.cd(repositoryName)
+        else
+        {
+            print("Unable to change directory to \(repositoryName).")
+            return nil
+        }
+        
+        guard let _ = git.checkout(branch)
+        else
+        {
+            print("Unable to checkout \(branch) branch.")
+            return nil
+        }
+        
+        guard let _ = get(updatePackages: true)
+        else
+        {
+            print("Failed the 'go get' command.")
+            return nil
+        }
+        
+        let targetPath = File.homeDirectory().appendingPathComponent("go").appendingPathComponent("bin").appendingPathComponent(target).path
+        
+        guard File.exists(targetPath)
+        else
+        {
+            print("Target \(target) does not exist at \(targetPath)")
+            return nil
+        }
+        
+        return targetPath
     }
 }
