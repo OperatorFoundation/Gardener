@@ -29,7 +29,7 @@ public class Swift
         guard Downloader.download(from: downloadURL, to: outputURL) else {return false}
         
         let command = Command()
-        guard let (exitCode, data, errData) = command.run("tar", "zxvf", filename) else {return false}
+        guard let (exitCode, data, _) = command.run("tar", "zxvf", filename) else {return false}
         guard exitCode == 0 else {return false}
 
         let tarline = String(data.string.split(separator: "\n")[0])

@@ -80,13 +80,13 @@ public class SSH
 
     public func ping() -> Bool
     {
-        guard let (_, output, errData) = remote(command: "echo pong") else {return false}
+        guard let (_, output, _) = remote(command: "echo pong") else {return false}
         return output.string == "pong\n"
     }
 
     public func fileExists(path: String) -> Bool
     {
-        guard let (result, data, errData) = remote(command: "ls -d \"\(path)\"") else {return false}
+        guard let (result, data, _) = remote(command: "ls -d \"\(path)\"") else {return false}
         guard result == 0 else {return false}
         guard let table = tabulate(string: data.string, headers: false, oneSpaceAllowed: false) else {return false}
 
@@ -133,13 +133,13 @@ public class SSH
         let _ = install(package: "wget")
 
         let urlString = url.absoluteString
-        guard let (result, _, errData) = remote(command: "wget -O \(outputFilename) \"\(urlString)\"") else {return false}
+        guard let _ = remote(command: "wget -O \(outputFilename) \"\(urlString)\"") else {return false}
         return true
     }
 
     public func sha1sum(path: String) -> String?
     {
-        guard let (result, data, errData) = remote(command: "sha1sum \"\(path)\"") else {return nil}
+        guard let (_, data, _) = remote(command: "sha1sum \"\(path)\"") else {return nil}
         guard let table = tabulate(string: data.string, headers: false, oneSpaceAllowed: false) else {return nil}
         return table.columns[0].fields[0]
     }
@@ -148,31 +148,31 @@ public class SSH
     {
         if force
         {
-            guard let (result, data, errData) = remote(command: "rm -rf \"\(path)\"") else {return false}
+            guard let _ = remote(command: "rm -rf \"\(path)\"") else {return false}
         }
         else
         {
-            guard let (result, data, errData) = remote(command: "rm \"\(path)\"") else {return false}
+            guard let _ = remote(command: "rm \"\(path)\"") else {return false}
         }
         return true
     }
 
     public func unzip(path: String) -> String?
     {
-        guard let (result, _, errData) = remote(command: "unzip \"\(path)\"") else {return nil}
+        guard let _ = remote(command: "unzip \"\(path)\"") else {return nil}
         return nil
     }
 
     public func untargzip(path: String) -> String?
     {
-        guard let (result, _, errData) = remote(command: "tar zxf \"\(path)\"") else {return nil}
+        guard let _ = remote(command: "tar zxf \"\(path)\"") else {return nil}
         return nil
     }
 
     // Idempotent file append
     public func append(path: String, string: String) -> Bool
     {
-        guard let (result, data, errData) = remote(command: "grep \"\(string)\" \"\(path)\"") else {return false}
+        guard let (_, data, _) = remote(command: "grep \"\(string)\" \"\(path)\"") else {return false}
 
         // String is already in file
         if data.string == string
@@ -188,14 +188,14 @@ public class SSH
 
     public func install(package: String) -> Bool
     {
-        guard let (result, _, errData) = remote(command: "apt install -y \(package)") else {return false}
+        guard let _ = remote(command: "apt install -y \(package)") else {return false}
         return true
     }
     
     public func update() -> Bool
     {
         // ErrorCode, stdOut, stdErr
-        guard let (_, _, _) = remote(command: "apt update")
+        guard let _ = remote(command: "apt update")
         else
         {
             print("Unable to continue: Failed apt update.")
@@ -208,7 +208,7 @@ public class SSH
 
     public func swiftVersion(path: String) -> String?
     {
-        guard let (result, data, errData) = remote(command: "\(path)/swift -version") else {return nil}
+        guard let (result, data, _) = remote(command: "\(path)/swift -version") else {return nil}
         guard result == 0 else {return nil}
         guard let table = tabulate(string: data.string, headers: false, oneSpaceAllowed: false) else {return nil}
         return table.columns[2].fields[0]
@@ -223,24 +223,24 @@ public class SSH
 
     public func gitClone(source: URL, branch: String) -> Bool
     {
-        let clonePath = source.absoluteString
-        var packageName = source.deletingPathExtension().lastPathComponent
+        _ = source.absoluteString
+        let packageName = source.deletingPathExtension().lastPathComponent
 
         if fileExists(path: packageName)
         {
-            guard let (result, data, errData) = remote(command: "cd \(packageName); git checkout \(branch); git pull origin \(branch)") else {return false}
+            guard let _ = remote(command: "cd \(packageName); git checkout \(branch); git pull origin \(branch)") else {return false}
             return true
         }
         else
         {
-            guard let (result, data, errData) = remote(command: "git clone \(source)") else {return false}
+            guard let _ = remote(command: "git clone \(source)") else {return false}
             return true
         }
     }
 
     public func lsb_release() -> String?
     {
-        guard let (result, data, errData) = remote(command: "lsb_release -r") else {return nil}
+        guard let (result, data, _) = remote(command: "lsb_release -r") else {return nil}
         guard result == 0 else {return nil}
         guard let table = tabulate(string: data.string, headers: false, oneSpaceAllowed: false) else {return nil}
         return table.columns[1].fields[0]
@@ -248,7 +248,7 @@ public class SSH
 
     public func gpg_add(keysFile: String) -> Bool
     {
-        guard let (result, data, errData) = remote(command: "gpg --import all-keys.asc") else {return false}
+        guard let _ = remote(command: "gpg --import all-keys.asc") else {return false}
         return true
     }
 }

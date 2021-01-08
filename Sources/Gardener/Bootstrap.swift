@@ -131,35 +131,35 @@ public class Bootstrap
             
             for dependency in swiftVersion.dependencies
             {
-                ssh.install(package: dependency)
+                let _ = ssh.install(package: dependency)
             }
 
-            ssh.download(url: swiftVersion.url, outputFilename: swiftVersion.tarName, sha1sum: swiftVersion.digest)
+            let _ = ssh.download(url: swiftVersion.url, outputFilename: swiftVersion.tarName, sha1sum: swiftVersion.digest)
 
             if ssh.fileExists(path: swiftVersion.dirName)
             {
-                ssh.rm(path: swiftVersion.dirName, force: true)
+                let _ = ssh.rm(path: swiftVersion.dirName, force: true)
             }
-            ssh.untargzip(path: swiftVersion.tarName)
+            let _ = ssh.untargzip(path: swiftVersion.tarName)
 
-            ssh.append(path: ".bashrc", string: "export PATH=\"${PATH}:/root/\(swiftVersion.dirName)/usr/bin\"")
+            let _ = ssh.append(path: ".bashrc", string: "export PATH=\"${PATH}:/root/\(swiftVersion.dirName)/usr/bin\"")
 
             let reportedVersion = ssh.swiftVersion(path: "/root/\(swiftVersion.dirName)/usr/bin")
             guard reportedVersion == swiftVersion.versionString
             else
             {
                 print("\n Unable to continue:")
-                print("\(reportedVersion) does not equal \(swiftVersion.versionString)")
+                print("\(reportedVersion ?? "nil") does not equal \(swiftVersion.versionString)")
                 return false
             }
         }
 
         guard let sourceURL = URL(string: source) else {return false}
-        ssh.gitClone(source: sourceURL, branch: branch)
+        let _ = ssh.gitClone(source: sourceURL, branch: branch)
 
         let package = sourceURL.lastPathComponent
         let installer: String = target ?? "\(package)Installer"
-        ssh.swiftRun(path: package, target: installer, pathToSwift: "/root/\(swiftVersion.dirName)/usr/bin")
+        let _ = ssh.swiftRun(path: package, target: installer, pathToSwift: "/root/\(swiftVersion.dirName)/usr/bin")
 
         return true
     }

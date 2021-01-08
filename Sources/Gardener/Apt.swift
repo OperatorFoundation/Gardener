@@ -61,7 +61,8 @@ public class Apt
     static public func installed(_ package: String) -> Bool
     {
         let command = Command()
-        guard let (exitCode, data, errData) = command.run("dpkg", "-l", package) else {return false}
+        guard let _ = command.run("dpkg", "-l", package)
+        else {return false}
 
         // FIXME - parse output and return actual result
         return false

@@ -34,33 +34,33 @@ public class Application
     static public func installFromSource(path: String, language: Language, source: URL, branch: String)
     {
         let git = Git()
-        git.cd(path)
+        let _ = git.cd(path)
         let clonePath = source.absoluteString
-        var packageName = source.deletingPathExtension().lastPathComponent
+        let packageName = source.deletingPathExtension().lastPathComponent
 
         print(FileManager.default.currentDirectoryPath)
 
         if File.exists(packageName)
         {
             print(FileManager.default.currentDirectoryPath)
-            git.cd(packageName)
-            git.checkout(branch)
-            git.pull("origin", branch)
+            let _ = git.cd(packageName)
+            let _ = git.checkout(branch)
+            let _ = git.pull("origin", branch)
         }
         else
         {
-            git.clone(clonePath)
-            git.cd(packageName)
+            let _ = git.clone(clonePath)
+            let _ = git.cd(packageName)
         }
 
         switch language
         {
             case .go:
                 let go = Go()
-                go.build()
+                let _ = go.build()
             case .swift:
                 let swift = Swift()
-                swift.build()
+                let _ = swift.build()
         }
     }
 }

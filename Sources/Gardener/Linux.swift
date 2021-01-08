@@ -13,7 +13,7 @@ public class Linux
     static public func version() -> String?
     {
         let command = Command()
-        guard let (_, data, errData) = command.run("lsb_release", "-a") else {return nil}
+        guard let (_, data, _) = command.run("lsb_release", "-a") else {return nil}
         let output = data.string
         guard let line = output.findLine(pattern: #"Release:"#) else {return nil}
         return line.extract(pattern: #"Release:[ ]+([^ ])+"#)

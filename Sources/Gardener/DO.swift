@@ -41,7 +41,7 @@ public class DO
         static public func create(server: Server) -> String?
         {
             let command = Command()
-            guard let (_, data, errData) = command.run("doctl", "compute", "droplet", "create", "--image", server.image, "--size", server.configuration, "--region", server.region, "--enable-ipv6", "--enable-monitoring", "--enable-private-networking", "--wait", server.name) else {return nil}
+            guard let (_, data, _) = command.run("doctl", "compute", "droplet", "create", "--image", server.image, "--size", server.configuration, "--region", server.region, "--enable-ipv6", "--enable-monitoring", "--enable-private-networking", "--wait", server.name) else {return nil}
 
             guard let table = tabulate(string: data.string) else {return nil}
             guard let dropletId = table.search(matchColumn: "Name", withValue: server.name, returnField: "ID") else {return nil}
@@ -102,7 +102,7 @@ public class DO
         static public func getAssignment(ip: String) -> String?
         {
             let command = Command()
-            guard let (_, data, errData) = command.run("doctl", "compute", "floating-ip", "get", ip, "--output", "json") else {return nil}
+            guard let (_, data, _) = command.run("doctl", "compute", "floating-ip", "get", ip, "--output", "json") else {return nil}
 
             guard let table = tabulate(string: data.string) else {return nil}
             guard let dropletId = table.search(matchColumn: "IP", withValue: ip, returnField: "Droplet ID") else {return nil}
