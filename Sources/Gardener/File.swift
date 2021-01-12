@@ -19,6 +19,20 @@ public class File
         return FileManager.default.homeDirectoryForCurrentUser
     }
     
+    static public func makeDirectory(atPath path: String) -> Bool
+    {
+        do
+        {
+            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
+            return true
+        }
+        catch let dirError
+        {
+            print("Failed to create a directory at \(path). Error: \(dirError)")
+            return false
+        }
+    }
+    
     static public func move(sourcePath: String, destinationPath: String) -> Bool
     {
         do
