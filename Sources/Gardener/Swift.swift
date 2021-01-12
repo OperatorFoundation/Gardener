@@ -12,6 +12,8 @@ public class Swift
 {
     var command = Command()
     
+    //FIXME: Solution for Linux
+    #if os(macOS)
     static public func install(os: String) -> Bool
     {
         let baseURL = URL(string: "https://swift.org")!
@@ -26,6 +28,7 @@ public class Swift
         let filename = downloadURL.lastPathComponent
         let outputURL = URL(fileURLWithPath: filename)
 
+        // FIXME: Downloader is currently only written for macOS
         guard Downloader.download(from: downloadURL, to: outputURL) else {return false}
         
         let command = Command()
@@ -38,6 +41,7 @@ public class Swift
         
         return true
     }
+    #endif
     
     public func cd(_ path: String) -> Bool
     {

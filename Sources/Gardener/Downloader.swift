@@ -8,6 +8,7 @@
 import Foundation
 import Chord
 
+#if os(macOS)
 public class Downloader
 {
     let from: URL
@@ -61,3 +62,4 @@ public class Downloader
         }
     }
 }
+#endif
