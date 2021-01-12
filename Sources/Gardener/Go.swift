@@ -11,6 +11,11 @@ import Datable
 public class Go
 {
     var command = Command()
+    
+    public init()
+    {
+        // Public Initializer
+    }
 
     static public func install() -> Bool
     {

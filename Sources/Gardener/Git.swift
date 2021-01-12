@@ -10,6 +10,11 @@ import Foundation
 public class Git
 {
     var command = Command()
+    
+    public init()
+    {
+        // Public initializer
+    }
 
     public func cd(_ path: String) -> Bool
     {
