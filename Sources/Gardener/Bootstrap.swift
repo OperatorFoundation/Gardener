@@ -118,7 +118,7 @@ public class Bootstrap
         }
     }
 
-    static public func bootstrap(username: String, host: String, port: Int? = nil, source: String, branch: String = "main", target: String? = nil) -> Bool
+    static public func bootstrap(username: String, host: String, port: Int? = nil, source: String, branch: String = "main", target: String? = nil, packages: [String]? = nil) -> Bool
     {
         guard let ssh = SSH(username: username, host: host, port: port) else {return false}
 
@@ -154,6 +154,14 @@ public class Bootstrap
             }
         }
 
+        if let installPackages = packages
+        {
+            for installPackage in installPackages
+            {
+                let _ = ssh.install(package: installPackage)
+            }
+        }
+        
         guard let sourceURL = URL(string: source) else {return false}
         let _ = ssh.gitClone(source: sourceURL, branch: branch)
 
