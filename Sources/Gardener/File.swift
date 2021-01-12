@@ -33,6 +33,35 @@ public class File
         }
     }
     
+    static public func copy(sourcePath: String, destinationPath: String) -> Bool
+    {
+        do
+        {
+            try FileManager.default.copyItem(atPath: sourcePath, toPath: destinationPath)
+        }
+        catch let copyError
+        {
+            print("Failed to move from \(sourcePath) to \(destinationPath)\nError: \(copyError)")
+            return false
+        }
+        
+        return true
+    }
+    
+    static public func delete(atPath path: String) -> Bool
+    {
+        do
+        {
+            try FileManager.default.removeItem(atPath: path)
+            return true
+        }
+        catch let deleteError
+        {
+            print("Failed to remove error at \(deleteError)")
+            return false
+        }
+    }
+    
     static public func move(sourcePath: String, destinationPath: String) -> Bool
     {
         do
