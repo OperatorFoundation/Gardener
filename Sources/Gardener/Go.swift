@@ -27,24 +27,49 @@ public class Go
     {
         #if os(Linux)
         let go = Go()
-        if Go.isInstalled, Go.isLatestVersion
+        if isInstalled, isLatestVersion
         {
             return false
         }
 
-        Apt.install("wget")
-
-        if File.exists(Go.goFilename)
+        guard let _ = Apt.install("wget")
+        else
         {
-            File.delete(atPath: Go.goFilename)
+            print("Failed to install wget.")
+            return false
+        }
+
+        if File.exists(goFilename)
+        {
+            guard File.delete(atPath: goFilename)
+            else
+            {
+                print("Failed to delete old go file \(goFilename).")
+                return false
+            }
         }
 
         let urlString = goUrl.absoluteString
-        guard let _ = remote(command: "wget -O \(Go.goFilename) \"\(Go.goUrl)\"") else {return false}
+        guard let _ = go.command.run("wget", "-O", goFilename, urlString)
+        else
+        {
+            print("Failed to wget \(urlString)")
+            return false
+        }
 
-        guard File.untargzip(path: Go.goFilename, outputPath: "/usr/local") else {return false}
+        guard File.untargzip(path: Go.goFilename, outputPath: "/usr/local")
+        else
+        {
+            print("Failed to untar the Go file.")
+            return false
+        }
 
-        guard Go.isInstalled, Go.isLatestVersion else {return false}
+        guard Go.isInstalled, Go.isLatestVersion
+        else
+        {
+            print("Failed to install the latest version of Go.")
+            return false
+        }
 
         return true
         #else
