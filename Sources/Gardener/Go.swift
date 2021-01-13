@@ -29,10 +29,10 @@ public class Go
         let go = Go()
         if Go.isInstalled, Go.isLatestVersion
         {
-            return
+            return false
         }
 
-        Apt.install(package: "wget")
+        Apt.install("wget")
 
         if File.exists(Go.goFilename)
         {
