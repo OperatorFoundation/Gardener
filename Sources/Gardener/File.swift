@@ -97,6 +97,22 @@ public class File
     {
         return FileManager.default.fileExists(atPath: path)
     }
+
+    static public func untargzip(path: String, outputPath: String? = nil) -> Bool
+    {
+        let command = Command()
+
+        if let outputDir = outputPath
+        {
+            guard let _ = command.run("tar", "-C", outputDir, "zxf", path) else {return false}
+        }
+        else
+        {
+            guard let _ = command.run("tar", "zxf", path) else {return false}
+        }
+
+        return true
+    }
     
     static public func zip(sourcePath: String, outputPath: String) -> Bool
     {

@@ -10,8 +10,14 @@ import Datable
 
 public class Go
 {
+    static let latestGo = "1.15.6"
+    static let goVersionString = "go\(latestGo)"
+    static let goFilename = "go\(latestGo).linux-amd64.tar.gz"
+    static let goUrl = URL(string: "https://golang.org/dl/\(goFilename)")!
+    static let bin = "/usr/local/bin/go"
+
     var command = Command()
-    
+
     public init()
     {
         // Public Initializer
@@ -20,19 +26,44 @@ public class Go
     static public func install() -> Bool
     {
         #if os(Linux)
-        guard let _ = Apt.install("golang")
-        else
+        let go = Go()
+        if Go.isInstalled, Go.isLatestVersion
         {
-            print("Failed to install Go")
-            return false
+            return
         }
+
+        Apt.install(package: "wget")
+
+        if File.exists(Go.goFilename)
+        {
+            File.delete(atPath: Go.goFilename)
+        }
+
+        let urlString = goUrl.absoluteString
+        guard let _ = remote(command: "wget -O \(Go.goFilename) \"\(Go.goUrl)\"") else {return false}
+
+        guard File.untargzip(path: Go.goFilename, outputPath: "/usr/local") else {return false}
+
+        guard Go.isInstalled, Go.isLatestVersion else {return false}
+
         return true
         #else
         print("Installing go is currently only supported on Linux os.")
         return false
         #endif
     }
-    
+
+    public static var isInstalled: Bool
+    {
+        return File.exists(Go.bin)
+    }
+
+    public static var isLatestVersion: Bool
+    {
+        let go = Go()
+        return go.version() == goVersionString
+    }
+
     public func cd(_ path: String) -> Bool
     {
         return command.cd(path)
@@ -42,28 +73,35 @@ public class Go
     {
         if updatePackages
         {
-            return command.run("go", "get", "-u")
+            return command.run(Go.bin, "get", "-u")
         }
         else
         {
-            return command.run("go", "get")
+            return command.run(Go.bin, "get")
         }
     }
-    
+
+    public func version() -> String?
+    {
+        guard let (_, output, _) = command.run(Go.bin, "version") else {return nil}
+        guard let table = tabulate(string: output.string) else {return nil}
+        return table.columns[2].fields[0]
+    }
+
     public func build() -> (Int32, Data, Data)?
     {
-        return command.run("go", "build")
+        return command.run(Go.bin, "build")
     }
     
     public func test() -> (Int32, Data, Data)?
     {
-        return command.run("go", "test")
+        return command.run(Go.bin, "test")
     }
 
     // FIXME - needs program name argument
     public func run() -> (Int32, Data, Data)?
     {
-        return command.run("go", "run")
+        return command.run(Go.bin, "run")
     }
     
     /// Clones repository, checks out the correct branch, and builds
