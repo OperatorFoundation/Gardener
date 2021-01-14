@@ -64,7 +64,14 @@ public class Go
             return false
         }
 
-        guard Go.isInstalled, Go.isLatestVersion
+        guard Go.isInstalled
+        else
+        {
+            print("Failed to install Go.")
+            return false
+        }
+        
+        guard Go.isLatestVersion
         else
         {
             print("Failed to install the latest version of Go.")
@@ -72,9 +79,12 @@ public class Go
         }
 
         return true
+        
         #else
+        
         print("Installing go is currently only supported on Linux os.")
         return false
+        
         #endif
     }
 
