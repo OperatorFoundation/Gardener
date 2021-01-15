@@ -119,7 +119,15 @@ public class Go
     public func version() -> String?
     {
         guard let (_, output, _) = command.run("\(Go.bin)/go", "version") else {return nil}
-        guard let table = tabulate(string: output.string) else {return nil}
+        
+        guard let table = tabulate(string: output.string)
+        else
+        {
+            print("Failed to tabulate output: \(output.string)")
+            return nil
+        }
+        
+        print("\nGo Version check result = \(table.columns[2].fields[0])\n")
         return table.columns[2].fields[0]
     }
 
