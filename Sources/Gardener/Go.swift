@@ -122,7 +122,13 @@ public class Go
     {
         print("Checking go version...")
         print("\(Go.bin)/go version")
-        guard let (_, output, _) = command.run("\(Go.bin)/go", "version") else {return nil}
+        
+        guard let (_, output, _) = command.run("\(Go.bin)/go", "version")
+        else
+        {
+            print("Failed to identify what version of go is installed at \(Go.bin)/go")
+            return nil
+        }
         
         guard let table = tabulate(string: output.string)
         else
@@ -131,6 +137,7 @@ public class Go
             return nil
         }
         
+        print("\(table.columns.count) columns")
         return table.columns[2].fields[0]
     }
 
