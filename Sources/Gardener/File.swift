@@ -104,11 +104,11 @@ public class File
 
         if let outputDir = outputPath
         {
-            guard let _ = command.run("tar", "-C", outputDir, "-xzf", path) else {return false}
+            guard let _ = command.run("tar", "xvzf", path, "-C", outputDir) else {return false}
         }
         else
         {
-            guard let _ = command.run("tar", "-zxf", path) else {return false}
+            guard let _ = command.run("tar", "xvzf", path) else {return false}
         }
 
         return true
