@@ -14,7 +14,7 @@ public class Go
     static let goVersionString = "go\(latestGo)"
     static let goFilename = "go\(latestGo).linux-amd64.tar.gz"
     static let goUrl = URL(string: "https://golang.org/dl/\(goFilename)")!
-    static let bin = "/usr/local/bin/go"
+    static let bin = "/usr/local/go/bin"
 
     var command = Command()
 
