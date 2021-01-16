@@ -206,6 +206,13 @@ public class Go
             return nil
         }
         
+        guard let _ = build()
+        else
+        {
+            print("Failed the 'go build' command.")
+            return nil
+        }
+        
         let targetPath = File.homeDirectory().appendingPathComponent("go").appendingPathComponent("bin").appendingPathComponent(target).path
         
         guard File.exists(targetPath)
