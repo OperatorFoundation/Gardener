@@ -29,7 +29,7 @@ public class Go
         let go = Go()
         if isInstalled, isLatestVersion
         {
-            return false
+            return true
         }
 
         guard let _ = Apt.install("wget")
