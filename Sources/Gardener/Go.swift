@@ -137,8 +137,14 @@ public class Go
             return nil
         }
         
-        print("\(table.columns.count) columns")
-        return table.columns[2].fields[0]
+        guard let label = table.columns[0].label
+        else
+        {
+            return nil
+        }
+        
+        let strings = label.components(separatedBy: " ")
+        return strings[2]
     }
 
     public func build() -> (Int32, Data, Data)?

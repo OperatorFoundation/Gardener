@@ -10,6 +10,13 @@ final class GardenerTests: XCTestCase
         XCTAssertTrue(result)
     }
     
+    public func testCommandGoVersion()
+    {
+        let result = Go().version()
+        
+        XCTAssertNotNil(result)
+    }
+    
     public func testSpacesOrTabs()
     {
         guard let table = tabulate(string: "Release:\t20.04", oneSpaceAllowed: false)

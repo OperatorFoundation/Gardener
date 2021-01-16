@@ -62,6 +62,10 @@ public class Command
                 }
             }
         }
+        else
+        {
+            pathFound = true
+        }
 
         guard pathFound else {return nil}
         
