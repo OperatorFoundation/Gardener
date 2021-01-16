@@ -14,7 +14,7 @@ public class Go
     static let goVersionString = "go\(latestGo)"
     static let goFilename = "go\(latestGo).linux-amd64.tar.gz"
     static let goUrl = URL(string: "https://golang.org/dl/\(goFilename)")!
-    static let bin = "/usr/local/go/bin"
+    static let bin = "/usr/local/go/bin/go"
 
     var command = Command()
 
@@ -121,12 +121,12 @@ public class Go
     public func version() -> String?
     {
         print("Checking go version...")
-        print("\(Go.bin)/go version")
+        print("\(Go.bin) version")
         
-        guard let (_, output, _) = command.run("\(Go.bin)/go", "version")
+        guard let (_, output, _) = command.run("\(Go.bin)", "version")
         else
         {
-            print("Failed to identify what version of go is installed at \(Go.bin)/go")
+            print("Failed to identify what version of go is installed at \(Go.bin)")
             return nil
         }
         
