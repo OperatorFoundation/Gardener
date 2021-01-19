@@ -52,7 +52,7 @@ public class File
         }
         catch let copyError
         {
-            print("Failed to move from \(sourcePath) to \(destinationPath)\nError: \(copyError)")
+            print("Failed to copy from \(sourcePath) to \(destinationPath)\nError: \(copyError)")
             return false
         }
         
@@ -81,7 +81,7 @@ public class File
         }
         catch let moveError
         {
-            print("Failed to move from \(sourcePath) to \(destinationPath)\nError: \(moveError)")
+            print("Failed to copy from \(sourcePath) to \(destinationPath)\nError: \(moveError)")
             return false
         }
         
