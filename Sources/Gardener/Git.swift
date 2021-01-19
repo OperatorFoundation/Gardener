@@ -15,11 +15,6 @@ public class Git
     {
         // Public initializer
     }
-
-    public func cd(_ path: String) -> Bool
-    {
-        return command.cd(path)
-    }
     
     public func initialize() -> (Int32, Data, Data)?
     {

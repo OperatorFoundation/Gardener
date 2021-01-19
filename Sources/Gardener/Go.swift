@@ -185,33 +185,29 @@ public class Go
             return nil
         }
         
-        guard git.cd(repositoryName)
-        else
+        let result = File.with(directory: repositoryName)
         {
-            print("Unable to change directory to \(repositoryName).")
-            return nil
+            () -> Bool in
+            
+            guard let _ = git.checkout(branch)
+            else
+            {
+                print("Unable to checkout \(branch) branch.")
+                return false
+            }
+            
+            guard let _ = get(updatePackages: true)
+            else
+            {
+                print("Failed the 'go get' command.")
+                return false
+            }
+
+            return true
         }
         
-        guard let _ = git.checkout(branch)
-        else
-        {
-            print("Unable to checkout \(branch) branch.")
-            return nil
-        }
-        
-        guard let _ = get(updatePackages: true)
-        else
-        {
-            print("Failed the 'go get' command.")
-            return nil
-        }
-        
-        guard let _ = build()
-        else
-        {
-            print("Failed the 'go build' command.")
-            return nil
-        }
+        guard result
+        else { return nil }
         
         let targetPath = File.homeDirectory().appendingPathComponent("go").appendingPathComponent("bin").appendingPathComponent(target).path
         
@@ -221,6 +217,7 @@ public class Go
             print("Target \(target) does not exist at \(targetPath)")
             return nil
         }
+        
         
         return targetPath
     }

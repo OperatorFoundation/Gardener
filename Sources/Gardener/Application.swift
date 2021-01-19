@@ -34,7 +34,7 @@ public class Application
     static public func installFromSource(path: String, language: Language, source: URL, branch: String)
     {
         let git = Git()
-        let _ = git.cd(path)
+        let _ = File.cd(path)
         let clonePath = source.absoluteString
         let packageName = source.deletingPathExtension().lastPathComponent
 
@@ -43,14 +43,14 @@ public class Application
         if File.exists(packageName)
         {
             print(FileManager.default.currentDirectoryPath)
-            let _ = git.cd(packageName)
+            let _ = File.cd(packageName)
             let _ = git.checkout(branch)
             let _ = git.pull("origin", branch)
         }
         else
         {
             let _ = git.clone(clonePath)
-            let _ = git.cd(packageName)
+            let _ = File.cd(packageName)
         }
 
         switch language

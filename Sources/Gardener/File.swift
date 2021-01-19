@@ -9,6 +9,12 @@ import Foundation
 
 public class File
 {
+    static public func cd(_ path: String) -> Bool
+    {
+        let command = Command()
+        return command.cd(path)
+    }
+    
     static public func get(_ path: String) -> Data?
     {
         return FileManager.default.contents(atPath: path)
@@ -17,6 +23,11 @@ public class File
     static public func homeDirectory() -> URL
     {
         return FileManager.default.homeDirectoryForCurrentUser
+    }
+    
+    static public func currentDirectory() -> String
+    {
+        return FileManager.default.currentDirectoryPath
     }
     
     static public func makeDirectory(atPath path: String) -> Bool
@@ -134,5 +145,27 @@ public class File
         }
         
         return true
+    }
+    
+    static public func with(directory: String, completion: () -> Bool) -> Bool
+    {
+        let startingDirectory = File.currentDirectory()
+        
+        guard File.cd(directory)
+        else { return false }
+        
+        let result = completion()
+        
+        guard File.cd(startingDirectory)
+        else
+        {
+            print("Warning: we failed to return to the starting directory after executing commands.")
+            print("Starting directory: \(startingDirectory)")
+            print("Current directory: \(File.currentDirectory())")
+            return result
+            
+        }
+        
+        return result
     }
 }

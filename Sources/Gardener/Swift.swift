@@ -100,7 +100,7 @@ public class Swift
             return nil
         }
         
-        guard git.cd(repositoryName)
+        guard File.cd(repositoryName)
         else
         {
             print("Unable to change directory to \(repositoryName).")
