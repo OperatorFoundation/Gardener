@@ -86,7 +86,7 @@ public class SCP
         let runner = Command()
 
         print("SCP(\(remoteHost)): \(remotePath) <- \(localPath)")
-        let maybeResult = runner.run("scp", "\(localPath) \(remoteHost):\(remotePath)")
+        let maybeResult = runner.run("scp", "\(localPath)", "\(remoteHost):\(remotePath)")
         if let (exitCode, data, errorData) = maybeResult
         {
             print("Exit code: \(exitCode)")
