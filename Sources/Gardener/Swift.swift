@@ -12,6 +12,8 @@ public class Swift
 {
     var command = Command()
     
+    public init(){}
+    
     //FIXME: Solution for Linux
     #if os(macOS)
     static public func install(os: String) -> Bool
