@@ -76,7 +76,7 @@ public class Command
         process.arguments = args
         process.standardOutput = stdoutPipe
         process.standardError = stderrPipe
-        process.currentDirectoryURL = URL(string: FileManager.default.currentDirectoryPath)
+        process.currentDirectoryURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
 
         let queue = DispatchQueue(label: "childProcessOutput", attributes: .concurrent)
 
