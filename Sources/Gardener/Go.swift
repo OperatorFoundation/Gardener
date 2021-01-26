@@ -75,7 +75,7 @@ public class Go
         else
         {
             print("Failed to install the latest version of Go.")
-            print("Reported version = \(go.version())")
+            print("Reported version = \(go.version() ?? "nil")")
             print("Required version = \(goVersionString)")
             return false
         }
