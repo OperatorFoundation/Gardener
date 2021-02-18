@@ -59,6 +59,20 @@ public class File
         return true
     }
     
+    static public func contentsOfDirectory(atPath directoryPath: String) -> [String]?
+    {
+        do
+        {
+            let contents = try FileManager.default.contentsOfDirectory(atPath: directoryPath)
+            return contents
+        }
+        catch
+        {
+            print("Failed to list contents of directory: \(error)")
+            return nil
+        }
+    }
+    
     static public func delete(atPath path: String) -> Bool
     {
         do

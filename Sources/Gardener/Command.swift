@@ -45,7 +45,12 @@ public class Command
     
     public func run(_ command: String, _ args: String...) -> (Int32, Data, Data)?
     {
-        guard command.count > 0 else {return nil}
+        guard command.count > 0
+        else
+        {
+            print("Run command failed. We couldn't understand the command \(command)")
+            return nil
+        }
 
         var absolutePath = command
 
@@ -67,7 +72,12 @@ public class Command
             pathFound = true
         }
 
-        guard pathFound else {return nil}
+        guard pathFound
+        else
+        {
+            print("Run command failed.")
+            return nil
+        }
         
         let stdoutPipe = Pipe()
         let stderrPipe = Pipe()
