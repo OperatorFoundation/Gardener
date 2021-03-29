@@ -122,6 +122,27 @@ public class File
     {
         return FileManager.default.fileExists(atPath: path)
     }
+    
+    static public func targzip(name: String, directoryPath: String) -> Bool
+    {
+        let command = Command()
+        
+        guard exists(directoryPath)
+        else
+        {
+            print("Nothing found at \(directoryPath)")
+            return false
+        }
+        
+        guard let _ = command.run("tar", "cvzf", name, directoryPath)
+        else
+        {
+            print("Failed to tar directory at \(directoryPath)")
+            return false
+        }
+
+        return true
+    }
 
     static public func untargzip(path: String, outputPath: String? = nil) -> Bool
     {
