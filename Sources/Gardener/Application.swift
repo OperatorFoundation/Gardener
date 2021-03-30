@@ -59,7 +59,7 @@ public class Application
                 let go = Go()
                 let _ = go.build()
             case .swift:
-                let swift = Swift()
+                guard let swift = Swift() else {return}
                 let _ = swift.build()
         }
     }

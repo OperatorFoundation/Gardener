@@ -242,8 +242,8 @@ public class SSH
     {
         guard let (result, data, _) = remote(command: "lsb_release -r") else {return nil}
         guard result == 0 else {return nil}
-        guard let table = tabulate(string: data.string, headers: false, oneSpaceAllowed: false) else {return nil}
-        return table.columns[1].fields[0]
+        
+        return Linux.parseLSBtoVersionNumber(lsbString: data.string)
     }
 
     public func gpg_add(keysFile: String) -> Bool

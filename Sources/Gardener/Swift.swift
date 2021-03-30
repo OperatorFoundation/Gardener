@@ -10,13 +10,19 @@ import Datable
 
 public class Swift
 {
-    var command = Command()
+    var command: Command
     
-    public init(){}
+    public init?(){
+        guard let ubuntuVersion = Linux.version() else {return nil}
+        guard let swiftVersion = Bootstrap.getSwiftVersion(swiftVersion: "5.3.2", ubuntuVersion: ubuntuVersion) else {return nil}
+        let swiftPath = "/root/\(swiftVersion.dirName)/usr/bin"
+        Command.swiftPath = swiftPath
+        command = Command()
+    }
     
-    //FIXME: Solution for Linux
+    //FIXME: Solution for Linux (Currently not being used)
     #if os(macOS)
-    static public func install(os: String) -> Bool
+    public func install(os: String) -> Bool
     {
         let baseURL = URL(string: "https://swift.org")!
         let releasesPageURL: URL = baseURL.appendingPathComponent("/download/#releases")
@@ -32,8 +38,6 @@ public class Swift
 
         // FIXME: Downloader is currently only written for macOS
         guard Downloader.download(from: downloadURL, to: outputURL) else {return false}
-        
-        let command = Command()
         guard let (exitCode, data, _) = command.run("tar", "zxvf", filename) else {return false}
         guard exitCode == 0 else {return false}
 
