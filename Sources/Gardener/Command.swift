@@ -43,7 +43,7 @@ public class Command
         return FileManager.default.changeCurrentDirectoryPath(path)
     }
     
-    public func run(_ command: String, _ args: String...) -> (Int32, Data, Data)?
+    public func run(_ command: String, _ args: String...) -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         guard command.count > 0
         else
