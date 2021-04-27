@@ -12,11 +12,15 @@ public class Swift
 {
     var command: Command
     
-    public init?(){
+    public init?()
+    {
+        #if os(Linux)
         guard let ubuntuVersion = Linux.version() else {return nil}
         guard let swiftVersion = Bootstrap.getSwiftVersion(swiftVersion: "5.3.2", ubuntuVersion: ubuntuVersion) else {return nil}
         let swiftPath = "/root/\(swiftVersion.dirName)/usr/bin"
         Command.swiftPath = swiftPath
+        #endif
+        
         command = Command()
     }
     
