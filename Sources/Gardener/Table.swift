@@ -24,6 +24,7 @@ public struct Table
         return returnRow.fields[returnColumnIndex]
     }
 
+    /// Takes the name of the column you want and returns the index of that column if one is found
     public func findColumnIndex(label: String) -> Int?
     {
         for (columnIndex, column) in columns.enumerated()
@@ -35,6 +36,20 @@ public struct Table
             }
         }
 
+        return nil
+    }
+    
+    public func findRowIndex(label: String) -> Int?
+    {
+        for (rowIndex, row) in rows.enumerated()
+        {
+            guard let rowLabel = row.label else {continue}
+            if rowLabel == label
+            {
+                return rowIndex
+            }
+        }
+        
         return nil
     }
 }
@@ -60,10 +75,11 @@ public struct Column
 
 public struct Row
 {
-    public var fields: [String] = []
+    public var label: String? = nil
+    public var fields: [String]
 }
 
-public func tabulate(string: String, headers: Bool = true, oneSpaceAllowed: Bool = true) -> Table?
+public func tabulate(string: String, headers: Bool = true, rowHeaders: Bool = false, oneSpaceAllowed: Bool = true, ignoreLeadingWhitespace: Bool = false) -> Table?
 {
     var table = Table()
 
@@ -72,11 +88,12 @@ public func tabulate(string: String, headers: Bool = true, oneSpaceAllowed: Bool
 
     for line in lines
     {
-        if firstLine
+        if (firstLine && !rowHeaders)
         {
             firstLine = false
 
             let fields = fancySplit(string: line, oneSpaceAllowed: oneSpaceAllowed)
+            
             for field in fields
             {
                 if headers
@@ -99,6 +116,18 @@ public func tabulate(string: String, headers: Bool = true, oneSpaceAllowed: Bool
             {
                 table.rows = [Row(fields: fields)]
             }
+        }
+        else if rowHeaders // This is a table where there are row headers
+        {
+            let fields = fancySplit(string: line, oneSpaceAllowed: oneSpaceAllowed)
+            
+            // Skip the blank lines
+            guard fields.count >= 1 else { continue }
+            
+            let rowHeader = fields[0]
+            let values = [String](fields[1...])
+            let row = Row(label: rowHeader, fields: values)
+            table.rows.append(row)
         }
         else
         {
