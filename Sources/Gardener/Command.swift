@@ -75,7 +75,9 @@ public class Command
         guard pathFound
         else
         {
-            print("Run command failed.")
+            print("\nRun command failed. Path not found.")
+            print("Path: \(path)")
+            print("Command: \(command)")
             return nil
         }
         
