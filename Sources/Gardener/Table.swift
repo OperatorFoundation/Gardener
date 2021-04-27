@@ -79,6 +79,22 @@ public struct Row
     public var fields: [String]
 }
 
+public func parseHttpLikeHeader(headerString: String) -> [String: String]
+{
+    var returnDictionary: [String: String] = [:]
+    let lines = headerString.components(separatedBy: "\n")
+    
+    for line in lines
+    {
+        let components = line.components(separatedBy: ": ")
+        guard components.count == 2 else { continue }
+        
+        returnDictionary[components[0].trimmingCharacters(in: .whitespacesAndNewlines)] = components[1]
+    }
+    
+    return returnDictionary
+}
+
 public func tabulate(string: String, headers: Bool = true, rowHeaders: Bool = false, oneSpaceAllowed: Bool = true, ignoreLeadingWhitespace: Bool = false) -> Table?
 {
     var table = Table()
