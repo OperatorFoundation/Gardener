@@ -77,6 +77,16 @@ public class SSH
 
         return maybeResult
     }
+    
+    public func remoteWithCancellation(command: String) -> Cancellable?
+    {
+        let runner = Command()
+
+        print("SSH(\(remoteHost)): running remote command \"\(command)\"")
+        let maybeResult = runner.runWithCancellation("ssh", remoteHost, command)
+
+        return maybeResult
+    }
 
     public func ping() -> Bool
     {
