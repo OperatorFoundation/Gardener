@@ -68,9 +68,37 @@ final class GardenerTests: XCTestCase
         XCTAssert(!newDict.isEmpty)
         XCTAssertEqual(newDict["Status"], "success")
     }
-//    public func testBootstrap()
-//    {
-//        let result = Bootstrap.bootstrap(username: "root", host: "206.189.200.18")
-//        XCTAssert(result)
-//    }
+
+    public func testHomebrewIsInstalled()
+    {
+        let correct = false
+        let maybeResult = Homebrew.isInstalled("fakepackage1234")
+        guard let result = maybeResult else
+        {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(result, correct)
+    }
+
+    public func testHomebrewInstallIsInstalled()
+    {
+        let correct = true
+
+        guard let (exitcode, stdout, stderr) = Homebrew.install("swiftlint") else
+        {
+            XCTFail()
+            return
+        }
+
+        let maybeResult = Homebrew.isInstalled("swiftlint")
+        guard let result = maybeResult else
+        {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(result, correct)
+    }
 }
