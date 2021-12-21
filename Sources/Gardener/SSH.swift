@@ -224,6 +224,14 @@ public class SSH
         return table.columns[2].fields[0]
     }
 
+    public func goVersion() -> String?
+    {
+        guard let (result, data, _) = remote(command: "go version") else {return nil}
+        guard result == 0 else {return nil}
+        guard let table = tabulate(string: data.string, headers: false, oneSpaceAllowed: false) else {return nil}
+        return table.columns[2].fields[0]
+    }
+    
     public func swiftRun(path: String, target: String, pathToSwift: String) -> Int32?
     {
         guard let (result, _, _) = remote(command: "cd \(path); \(pathToSwift)/swift run \(target)")
