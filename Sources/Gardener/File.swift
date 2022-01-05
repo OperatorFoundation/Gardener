@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SystemPackage
 
 public class File
 {
@@ -121,6 +122,44 @@ public class File
     static public func exists(_ path: String) -> Bool
     {
         return FileManager.default.fileExists(atPath: path)
+    }
+
+    // Surprisingly hard to do in Swift. The usual way of doing this depends on Obj-C and so its not cross-platform, so we use the multi-platform System library instead.
+    static public func isDirectory(_ path: String) -> Bool
+    {
+        guard File.exists(path) else {return false}
+
+        let filepath: FilePath = FilePath(path)
+        do
+        {
+            let fd = try FileDescriptor.open(filepath, .readOnly, options: [.directory])
+            try fd.close()
+
+            return true
+        }
+        catch
+        {
+            return false
+        }
+    }
+
+    // Like the Unix touch command, creates a file of zero length.
+    static public func touch(_ path: String) -> Bool
+    {
+        guard !File.exists(path) else {return true}
+
+        let filepath: FilePath = FilePath(path)
+        do
+        {
+            let fd = try FileDescriptor.open(filepath, .writeOnly, options: [.create], permissions: .ownerReadWrite)
+            try fd.close()
+
+            return true
+        }
+        catch
+        {
+            return false
+        }
     }
     
     static public func targzip(name: String, directoryPath: String) -> Bool

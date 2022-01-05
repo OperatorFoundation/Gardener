@@ -101,4 +101,33 @@ final class GardenerTests: XCTestCase
 
         XCTAssertEqual(result, correct)
     }
+
+    public func testIsDirectory()
+    {
+        guard File.touch("testfile") else
+        {
+            XCTFail()
+            return
+        }
+        guard File.makeDirectory(atPath: "testdir") else
+        {
+            XCTFail()
+            return
+        }
+
+        XCTAssertFalse(File.isDirectory("testfile"))
+        XCTAssertTrue(File.isDirectory("testdir"))
+
+        guard File.delete(atPath: "testfile") else
+        {
+            XCTFail()
+            return
+        }
+
+        guard File.delete(atPath: "testdir") else
+        {
+            XCTFail()
+            return
+        }
+    }
 }
