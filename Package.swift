@@ -15,9 +15,8 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/OperatorFoundation/Song", from: "0.2.1"),
-        .package(url: "https://github.com/OperatorFoundation/Datable", from: "3.1.1"),
         .package(url: "https://github.com/OperatorFoundation/Chord", from: "0.0.13"),
+        .package(url: "https://github.com/OperatorFoundation/Datable", from: "3.1.1"),
         .package(url: "https://github.com/apple/swift-system", from: "1.1.1"),
     ],
     targets: [
@@ -25,7 +24,9 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "Gardener",
-            dependencies: ["Song", "Datable", "Chord",
+            dependencies: [
+                "Chord",
+                "Datable",
                 .product(name: "SystemPackage", package: "swift-system")
             ]),
         .testTarget(
