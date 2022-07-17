@@ -30,7 +30,12 @@ public class File
     {
         return FileManager.default.currentDirectoryPath
     }
-    
+
+    static public func applicationSupportDirectory() -> URL
+    {
+        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+    }
+
     static public func makeDirectory(atPath path: String) -> Bool
     {
         do
