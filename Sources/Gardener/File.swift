@@ -49,6 +49,20 @@ public class File
             return false
         }
     }
+
+    static public func makeDirectory(url: URL) -> Bool
+    {
+        do
+        {
+            try FileManager.default.createDirectory(atPath: url.path, withIntermediateDirectories: true)
+            return true
+        }
+        catch let dirError
+        {
+            print("Failed to create a directory at \(url.path). Error: \(dirError)")
+            return false
+        }
+    }
     
     static public func copy(sourcePath: String, destinationPath: String) -> Bool
     {
