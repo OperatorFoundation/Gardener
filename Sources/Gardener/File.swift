@@ -275,4 +275,12 @@ public class File
         let temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(temporaryFilename)
         return temporaryFileURL
     }
+
+    static public func cacheableFile(name: String) throws -> URL
+    {
+        let temporaryDirectoryURL = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+
+        let temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(name)
+        return temporaryFileURL
+    }
 }
