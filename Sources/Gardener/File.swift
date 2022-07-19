@@ -261,4 +261,12 @@ public class File
         
         return result
     }
+
+    static public func tempFile() throws -> URL
+    {
+        let temporaryDirectoryURL = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+        let temporaryFilename = ProcessInfo().globallyUniqueString
+        let temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(temporaryFilename)
+        return temporaryFileURL
+    }
 }
