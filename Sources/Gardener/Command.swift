@@ -42,6 +42,63 @@ public class Command
         
         return FileManager.default.changeCurrentDirectoryPath(path)
     }
+
+    public func runQuiet(_ command: String, _ args: String...) -> Bool
+    {
+        guard command.count > 0
+        else
+        {
+            print("Run command failed. We couldn't understand the command \(command)")
+            return false
+        }
+
+        var absolutePath = command
+
+        var pathFound = false
+        if command.first! != "/"
+        {
+            for attempt in path
+            {
+                absolutePath = attempt + "/" + command
+                if FileManager.default.fileExists(atPath: absolutePath)
+                {
+                    pathFound = true
+                    break
+                }
+            }
+        }
+        else
+        {
+            pathFound = true
+        }
+
+        guard pathFound
+        else
+        {
+            print("\nRun command failed. Path not found.")
+            print("Path: \(path)")
+            print("Command: \(command)")
+            return false
+        }
+
+        let process = Process.init()
+        process.executableURL = URL(fileURLWithPath: absolutePath)
+        process.arguments = args
+        process.currentDirectoryURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+
+        do
+        {
+            try process.run()
+        }
+        catch
+        {
+            return false
+        }
+
+        process.waitUntilExit()
+
+        return true
+    }
     
     public func run(_ command: String, _ args: String...) -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
