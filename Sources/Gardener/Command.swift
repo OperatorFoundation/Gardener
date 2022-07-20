@@ -45,6 +45,11 @@ public class Command
 
     public func runQuiet(_ command: String, _ args: String...) -> Bool
     {
+        return self.runQuiet(command, args)
+    }
+
+    public func runQuiet(_ command: String, _ args: [String]) -> Bool
+    {
         guard command.count > 0
         else
         {
@@ -102,6 +107,12 @@ public class Command
     
     public func run(_ command: String, _ args: String...) -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
+        return self.run(command, args)
+    }
+
+    public func run(_ command: String, _ args: [String]) -> (exitCode: Int32, resultData: Data, errorData: Data)?
+    {
+
         guard command.count > 0
         else
         {
