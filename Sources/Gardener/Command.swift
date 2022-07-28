@@ -21,7 +21,10 @@ public class Command
     
     static public func addDefaultPath(_ item: String)
     {
-        defaultPath.append(item)
+        if !defaultPath.contains(item)
+        {
+            defaultPath.append(item)
+        }
     }
     
     static public var swiftPath: String?
@@ -33,6 +36,14 @@ public class Command
         if let swiftPath = Command.swiftPath
         {
             self.path.append(swiftPath)
+        }
+    }
+
+    public func addPath(_ item: String)
+    {
+        if !self.path.contains(item)
+        {
+            self.path.append(item)
         }
     }
     
