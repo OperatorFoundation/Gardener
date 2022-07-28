@@ -3,6 +3,23 @@ import XCTest
 
 final class GardenerTests: XCTestCase
 {
+    public func testFetchApplicationSupportDirectorySubDirectories() {
+        let appSupportDir = File.applicationSupportDirectory()
+        guard let contents = File.contentsOfDirectory(atPath: appSupportDir.path) else {
+            XCTFail()
+            return
+        }
+        
+        let contentsIndex = contents.enumerated()
+        for (_, subDir) in contentsIndex {
+            if appSupportDir.appendingPathComponent(subDir).hasDirectoryPath {
+                print("\(subDir) is a directory")
+            } else {
+                print("\(subDir) is not a directory")
+            }
+        }
+    }
+    
     public func testInstallTapeServer()
     {
         let result = Bootstrap.bootstrap(username: "root", host: "206.189.200.18", source: "https://github.com/blanu/TapeServer", branch: "main", target: "TapeServerInstaller")
