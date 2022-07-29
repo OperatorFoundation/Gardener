@@ -46,6 +46,14 @@ public class Command
             self.path.append(item)
         }
     }
+
+    public func addPathFirst(_ item: String)
+    {
+        if !self.path.contains(item)
+        {
+            self.path = [item] + self.path
+        }
+    }
     
     public func cd(_ path: String) -> Bool
     {

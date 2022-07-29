@@ -38,7 +38,8 @@ public struct Table
 
         return nil
     }
-    
+
+    /// Takes the name of the row you want and returns the index of that column if one is found
     public func findRowIndex(label: String) -> Int?
     {
         for (rowIndex, row) in rows.enumerated()
