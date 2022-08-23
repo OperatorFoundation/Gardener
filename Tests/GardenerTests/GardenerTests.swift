@@ -103,7 +103,7 @@ final class GardenerTests: XCTestCase
     {
         let correct = true
 
-        guard let (exitcode, stdout, stderr) = Homebrew.install("swiftlint") else
+        guard let (_, _, _) = Homebrew.install("swiftlint") else
         {
             XCTFail()
             return

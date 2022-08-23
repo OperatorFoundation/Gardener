@@ -276,21 +276,72 @@ public class Command
             return nil
         }
 
-        return Cancellable(process: process)
+        return Cancellable(process: process, stdoutHandle: stdoutPipe.fileHandleForReading, stderrHandle: stderrPipe.fileHandleForReading)
     }
 }
 
-public struct Cancellable {
+public class Cancellable
+{
     let process: Process
+    let queue = DispatchQueue(label: "CancellableQueue", attributes: .concurrent)
     
-    public init(process: Process) {
+    var stdoutLock = DispatchGroup()
+    var stdoutHandle: FileHandle
+    var stdoutData: Data? = nil
+    
+    var stderrLock = DispatchGroup()
+    var stderrHandle: FileHandle
+    var stderrData: Data? = nil
+    
+    public init(process: Process, stdoutHandle: FileHandle, stderrHandle: FileHandle)
+    {
         self.process = process
+        self.stdoutHandle = stdoutHandle
+        self.stderrHandle = stderrHandle
+        
+        self.stdoutLock.enter()
+        self.queue.async
+        {
+            self.stdoutData = self.stdoutHandle.readDataToEndOfFile()
+            self.stdoutLock.leave()
+        }
+        
+        self.stderrLock.enter()
+        self.queue.async
+        {
+            self.stderrData = self.stderrHandle.readDataToEndOfFile()
+            self.stderrLock.leave()
+        }
     }
     
-    public func cancel() {
+    public func wait() -> (exitCode: Int32, resultData: Data, errorData: Data)?
+    {
+        self.process.waitUntilExit()
+        let exitCode = self.process.terminationStatus
+        
+        self.stdoutLock.wait()
+        guard let resultData = stdoutData else
+        {
+            return nil
+        }
+        
+        self.stderrLock.wait()
+        guard let errorData = self.stderrData else
+        {
+            return nil
+        }
+        
+        return (exitCode, resultData, errorData)
+    }
+    
+    public func cancel() -> (exitCode: Int32, resultData: Data, errorData: Data)?
+    {
         self.process.interrupt()
-        if process.isRunning {
+        if process.isRunning
+        {
             process.terminate()
         }
+        
+        return self.wait()
     }
 }

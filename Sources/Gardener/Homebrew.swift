@@ -47,7 +47,7 @@ public class Homebrew
     {
         let command = Command()
         command.addPath("/opt/homebrew/bin")
-        guard let (exitCode, data, errData) = command.run("brew", "list", package) else {return nil}
+        guard let (exitCode, _, _) = command.run("brew", "list", package) else {return nil}
 
         return exitCode == 0
     }
