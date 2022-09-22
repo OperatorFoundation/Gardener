@@ -266,7 +266,7 @@ public class File
     {
         let temporaryDirectoryURL = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
 
-        var temporaryFilename = ProcessInfo().globallyUniqueString
+        var temporaryFilename = ProcessInfo.processInfo.globallyUniqueString
         if let suffix = ext
         {
             temporaryFilename.append(suffix)
