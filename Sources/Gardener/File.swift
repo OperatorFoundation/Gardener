@@ -23,7 +23,11 @@ public class File
     
     static public func homeDirectory() -> URL
     {
+        #if os(macOS)
         return FileManager.default.homeDirectoryForCurrentUser
+        #else
+        return NSString(string: "~").expandingTildeInPath
+        #endif
     }
     
     static public func currentDirectory() -> String
