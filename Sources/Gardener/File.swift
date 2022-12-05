@@ -10,10 +10,35 @@ import SystemPackage
 
 public class File
 {
+    static var pushedDirectories: [String] = []
+    
     static public func cd(_ path: String) -> Bool
     {
         let command = Command()
         return command.cd(path)
+    }
+    
+    static public func pushd(_ directory: String) -> Bool
+    {
+        let current = self.currentDirectory()
+        self.pushedDirectories.append(current)
+        guard cd(directory) else {
+            return false
+        }
+        return true
+    }
+    
+    static func popd() -> Bool
+    {
+        guard let originalDirectory = self.pushedDirectories.popLast() else
+        {
+            return false
+        }
+        guard cd(originalDirectory) else
+        {
+            return false
+        }
+        return true
     }
     
     static public func get(_ path: String) -> Data?
