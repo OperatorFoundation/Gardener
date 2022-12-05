@@ -28,7 +28,7 @@ public class File
         return true
     }
     
-    static func popd() -> Bool
+    static public func popd() -> Bool
     {
         guard let originalDirectory = self.pushedDirectories.popLast() else
         {
