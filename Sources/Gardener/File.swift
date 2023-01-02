@@ -8,6 +8,8 @@
 import Foundation
 import SystemPackage
 
+import Glob
+
 public class File
 {
     static public func cd(_ path: String) -> Bool
@@ -294,6 +296,31 @@ public class File
 
         let temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(name)
         return temporaryFileURL
+    }
+
+    static public func findFiles(_ path: URL) -> [URL]
+    {
+        guard let enumeration = FileManager.default.enumerator(atPath: path.path) else
+        {
+            return []
+        }
+
+        for file in enumeration
+        {
+            print(file)
+        }
+
+        return []
+    }
+
+    static public func findFiles(_ path: URL, pattern: String) -> [URL]
+    {
+        return Glob(pattern: "\(path.path)/\(pattern)").map
+        {
+            path in
+
+            URL(fileURLWithPath: path)
+        }
     }
 }
 

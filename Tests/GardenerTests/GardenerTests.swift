@@ -147,4 +147,20 @@ final class GardenerTests: XCTestCase
             return
         }
     }
+
+    func testFindFiles() throws
+    {
+        let home = File.homeDirectory()
+        let dir = home.appendingPathComponent("Gardener")
+        let files = File.findFiles(dir)
+        print(files)
+    }
+
+    func testFindFilesGlob() throws
+    {
+        let home = File.homeDirectory()
+        let dir = home.appendingPathComponent("Gardener")
+        let files = File.findFiles(dir, pattern: "*.swift")
+        print(files)
+    }
 }
