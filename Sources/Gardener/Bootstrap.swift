@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 12/9/20.
 //
-
+#if os(macOS)
 import Foundation
 
 public struct SwiftVersion
@@ -172,3 +172,4 @@ public class Bootstrap
         return true
     }
 }
+#endif

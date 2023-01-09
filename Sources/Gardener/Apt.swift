@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 8/2/20.
 //
-
+#if os(macOS)
 import Foundation
 import Datable
 
@@ -68,3 +68,4 @@ public class Apt
         return false
     }
 }
+#endif

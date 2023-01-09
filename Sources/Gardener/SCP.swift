@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 1/4/21.
 //
-
+#if os(macOS)
 import Foundation
 
 public class SCP
@@ -134,3 +134,4 @@ public class SCP
         return maybeResult
     }
 }
+#endif

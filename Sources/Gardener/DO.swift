@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 9/15/20.
 //
-
+#if os(macOS)
 import Foundation
 
 public class DO
@@ -111,3 +111,4 @@ public class DO
         }
     }
 }
+#endif

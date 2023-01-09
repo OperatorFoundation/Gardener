@@ -4,7 +4,7 @@
 //
 //  Created by Mafalda on 4/5/21.
 //
-
+#if os(macOS)
 import Foundation
 
 public class XCode
@@ -25,3 +25,4 @@ public class XCode
                             "--password", password)
     }
 }
+#endif

@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 12/9/20.
 //
-
+#if os(macOS)
 import Foundation
 
 public class SSH
@@ -270,3 +270,4 @@ public class SSH
         return true
     }
 }
+#endif

@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 8/2/20.
 //
-
+#if os(macOS)
 import Foundation
 
 public class Git
@@ -46,3 +46,4 @@ public class Git
         return command.run("git", "remote", "add", name, path)
     }
 }
+#endif

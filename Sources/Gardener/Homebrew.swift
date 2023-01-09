@@ -1,7 +1,7 @@
 //
 //  Homebrew.swift
 //
-
+#if os(macOS)
 import Foundation
 import Datable
 
@@ -52,3 +52,4 @@ public class Homebrew
         return exitCode == 0
     }
 }
+#endif

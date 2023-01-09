@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 12/7/20.
 //
-
+#if os(macOS)
 import Foundation
 
 import Foundation
@@ -64,3 +64,4 @@ public class Application
         }
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if os(macOS)
 import XCTest
 @testable import Gardener
 
@@ -164,3 +165,4 @@ final class GardenerTests: XCTestCase
         print(files)
     }
 }
+#endif

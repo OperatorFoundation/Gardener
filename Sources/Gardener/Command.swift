@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 8/2/20.
 //
-
+#if os(macOS)
 import Foundation
 
 public class Command
@@ -345,3 +345,4 @@ public class Cancellable
         return self.wait()
     }
 }
+#endif

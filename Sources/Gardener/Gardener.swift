@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 
 public class Gardener: Codable
@@ -12,3 +13,4 @@ public class Gardener: Codable
         }
     }
 }
+#endif

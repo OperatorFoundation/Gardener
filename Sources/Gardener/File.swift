@@ -14,6 +14,7 @@ public class File
 {
     static var pushedDirectories: [String] = []
     
+    #if os(macOS)
     static public func cd(_ path: String) -> Bool
     {
         let command = Command()
@@ -42,16 +43,19 @@ public class File
         }
         return true
     }
+    #endif
     
     static public func get(_ path: String) -> Data?
     {
         return FileManager.default.contents(atPath: path)
     }
     
+    #if os(macOS)
     static public func homeDirectory() -> URL
     {
         return FileManager.default.homeDirectoryForCurrentUser
     }
+    #endif
     
     static public func currentDirectory() -> String
     {
@@ -208,6 +212,7 @@ public class File
         }
     }
     
+    #if os(macOS)
     static public func targzip(name: String, directoryPath: String) -> Bool
     {
         let command = Command()
@@ -288,6 +293,7 @@ public class File
         
         return result
     }
+    #endif
 
     static public func tempFile(ext: String? = nil) throws -> URL
     {

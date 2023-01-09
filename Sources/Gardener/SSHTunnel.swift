@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 9/6/22.
 //
-
+#if os(macOS)
 import Foundation
 
 public class SSHRemoteTunnel
@@ -72,3 +72,4 @@ public class SSHLocalTunnel
         let _ = self.task.cancel()
     }
 }
+#endif

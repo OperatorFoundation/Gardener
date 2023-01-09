@@ -4,7 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 11/21/21.
 //
-
+#if os(macOS)
 import Foundation
 
 public class SwiftFormat
@@ -26,3 +26,4 @@ public class SwiftFormat
         return exitCode == 0
     }
 }
+#endif
