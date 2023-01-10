@@ -8,7 +8,8 @@
 import Foundation
 import Chord
 
-#if os(macOS)
+#if os(iOS) || os(watchOS) || os(tvOS)
+#else
 public class Downloader
 {
     let from: URL

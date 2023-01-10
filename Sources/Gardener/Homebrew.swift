@@ -1,7 +1,8 @@
 //
 //  Homebrew.swift
 //
-#if os(macOS)
+#if os(iOS) || os(watchOS) || os(tvOS)
+#else
 import Foundation
 import Datable
 

@@ -4,7 +4,8 @@
 //
 //  Created by Dr. Brandon Wiley on 9/15/20.
 //
-#if os(macOS)
+#if os(iOS) || os(watchOS) || os(tvOS)
+#else
 import Foundation
 
 public class DO

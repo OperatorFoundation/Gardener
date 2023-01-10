@@ -4,7 +4,8 @@
 //
 //  Created by Dr. Brandon Wiley on 8/3/20.
 //
-#if os(macOS)
+#if os(iOS) || os(watchOS) || os(tvOS)
+#else
 import Foundation
 import Datable
 

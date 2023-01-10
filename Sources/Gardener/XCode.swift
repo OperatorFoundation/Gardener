@@ -4,7 +4,8 @@
 //
 //  Created by Mafalda on 4/5/21.
 //
-#if os(macOS)
+#if os(iOS) || os(watchOS) || os(tvOS)
+#else
 import Foundation
 
 public class XCode
