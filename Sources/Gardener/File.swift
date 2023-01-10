@@ -14,7 +14,8 @@ public class File
 {
     static var pushedDirectories: [String] = []
     
-    #if os(macOS)
+    #if os(iOS) || os(watchOS) || os(tvOS)
+    #else
     static public func cd(_ path: String) -> Bool
     {
         let command = Command()
@@ -50,7 +51,8 @@ public class File
         return FileManager.default.contents(atPath: path)
     }
     
-    #if os(macOS)
+    #if os(iOS) || os(watchOS) || os(tvOS)
+    #else
     static public func homeDirectory() -> URL
     {
         return FileManager.default.homeDirectoryForCurrentUser
