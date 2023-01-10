@@ -49,7 +49,7 @@ public class File
     {
         return FileManager.default.homeDirectoryForCurrentUser
     }
-    
+
     static public func targzip(name: String, directoryPath: String) -> Bool
     {
         let command = Command()
@@ -286,7 +286,6 @@ public class File
             return false
         }
     }
-
 
     static public func tempFile(ext: String? = nil) throws -> URL
     {

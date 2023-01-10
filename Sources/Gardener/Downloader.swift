@@ -8,6 +8,11 @@
 import Foundation
 import Chord
 
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+#else
+import FoundationNetworking
+#endif
+
 #if os(iOS) || os(watchOS) || os(tvOS)
 #else
 public class Downloader
