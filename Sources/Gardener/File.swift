@@ -44,177 +44,12 @@ public class File
         }
         return true
     }
-    #endif
-    
-    static public func get(_ path: String) -> Data?
-    {
-        return FileManager.default.contents(atPath: path)
-    }
-    
-    #if os(iOS) || os(watchOS) || os(tvOS)
-    #else
+
     static public func homeDirectory() -> URL
     {
         return FileManager.default.homeDirectoryForCurrentUser
     }
-    #endif
     
-    static public func currentDirectory() -> String
-    {
-        return FileManager.default.currentDirectoryPath
-    }
-
-    static public func applicationSupportDirectory() -> URL
-    {
-        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-    }
-
-    static public func makeDirectory(atPath path: String) -> Bool
-    {
-        do
-        {
-            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
-            return true
-        }
-        catch let dirError
-        {
-            print("Failed to create a directory at \(path). Error: \(dirError)")
-            return false
-        }
-    }
-
-    static public func makeDirectory(url: URL) -> Bool
-    {
-        do
-        {
-            try FileManager.default.createDirectory(atPath: url.path, withIntermediateDirectories: true)
-            return true
-        }
-        catch let dirError
-        {
-            print("Failed to create a directory at \(url.path). Error: \(dirError)")
-            return false
-        }
-    }
-    
-    static public func copy(sourcePath: String, destinationPath: String) -> Bool
-    {
-        do
-        {
-            try FileManager.default.copyItem(atPath: sourcePath, toPath: destinationPath)
-        }
-        catch let copyError
-        {
-            print("Failed to copy from \(sourcePath) to \(destinationPath)\nError: \(copyError)")
-            return false
-        }
-        
-        return true
-    }
-    
-    static public func contentsOfDirectory(atPath directoryPath: String) -> [String]?
-    {
-        do
-        {
-            let contents = try FileManager.default.contentsOfDirectory(atPath: directoryPath)
-            return contents
-        }
-        catch
-        {
-            print("Failed to list contents of directory: \(error)")
-            return nil
-        }
-    }
-    
-    static public func delete(atPath path: String) -> Bool
-    {
-        do
-        {
-            try FileManager.default.removeItem(atPath: path)
-            return true
-        }
-        catch let deleteError
-        {
-            print("Failed to remove error at \(deleteError)")
-            return false
-        }
-    }
-    
-    static public func move(sourcePath: String, destinationPath: String) -> Bool
-    {
-        do
-        {
-            try FileManager.default.moveItem(atPath: sourcePath, toPath: destinationPath)
-        }
-        catch let moveError
-        {
-            print("Failed to copy from \(sourcePath) to \(destinationPath)\nError: \(moveError)")
-            return false
-        }
-        
-        return true
-    }
-    
-    static public func put(_ path: String, contents: Data) -> Bool
-    {
-        let url = URL(fileURLWithPath: path)
-        
-        do
-        {
-            try contents.write(to: url)
-        }
-        catch
-        {
-            return false
-        }
-        
-        return true
-    }
-
-    static public func exists(_ path: String) -> Bool
-    {
-        return FileManager.default.fileExists(atPath: path)
-    }
-
-    // Surprisingly hard to do in Swift. The usual way of doing this depends on Obj-C and so its not cross-platform, so we use the multi-platform System library instead.
-    static public func isDirectory(_ path: String) -> Bool
-    {
-        guard File.exists(path) else {return false}
-
-        let filepath: FilePath = FilePath(path)
-        do
-        {
-            let fd = try FileDescriptor.open(filepath, .readOnly, options: [.directory])
-            try fd.close()
-
-            return true
-        }
-        catch
-        {
-            return false
-        }
-    }
-
-    // Like the Unix touch command, creates a file of zero length.
-    static public func touch(_ path: String) -> Bool
-    {
-        guard !File.exists(path) else {return true}
-
-        let filepath: FilePath = FilePath(path)
-        do
-        {
-            let fd = try FileDescriptor.open(filepath, .writeOnly, options: [.create], permissions: .ownerReadWrite)
-            try fd.close()
-
-            return true
-        }
-        catch
-        {
-            return false
-        }
-    }
-    
-    #if os(macOS)
     static public func targzip(name: String, directoryPath: String) -> Bool
     {
         let command = Command()
@@ -297,6 +132,162 @@ public class File
     }
     #endif
 
+    static public func currentDirectory() -> String
+    {
+        return FileManager.default.currentDirectoryPath
+    }
+
+    static public func applicationSupportDirectory() -> URL
+    {
+        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+    }
+
+    static public func makeDirectory(atPath path: String) -> Bool
+    {
+        do
+        {
+            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
+            return true
+        }
+        catch let dirError
+        {
+            print("Failed to create a directory at \(path). Error: \(dirError)")
+            return false
+        }
+    }
+
+    static public func makeDirectory(url: URL) -> Bool
+    {
+        do
+        {
+            try FileManager.default.createDirectory(atPath: url.path, withIntermediateDirectories: true)
+            return true
+        }
+        catch let dirError
+        {
+            print("Failed to create a directory at \(url.path). Error: \(dirError)")
+            return false
+        }
+    }
+
+    static public func copy(sourcePath: String, destinationPath: String) -> Bool
+    {
+        do
+        {
+            try FileManager.default.copyItem(atPath: sourcePath, toPath: destinationPath)
+        }
+        catch let copyError
+        {
+            print("Failed to copy from \(sourcePath) to \(destinationPath)\nError: \(copyError)")
+            return false
+        }
+
+        return true
+    }
+
+    static public func contentsOfDirectory(atPath directoryPath: String) -> [String]?
+    {
+        do
+        {
+            let contents = try FileManager.default.contentsOfDirectory(atPath: directoryPath)
+            return contents
+        }
+        catch
+        {
+            print("Failed to list contents of directory: \(error)")
+            return nil
+        }
+    }
+
+    static public func delete(atPath path: String) -> Bool
+    {
+        do
+        {
+            try FileManager.default.removeItem(atPath: path)
+            return true
+        }
+        catch let deleteError
+        {
+            print("Failed to remove error at \(deleteError)")
+            return false
+        }
+    }
+
+    static public func move(sourcePath: String, destinationPath: String) -> Bool
+    {
+        do
+        {
+            try FileManager.default.moveItem(atPath: sourcePath, toPath: destinationPath)
+        }
+        catch let moveError
+        {
+            print("Failed to copy from \(sourcePath) to \(destinationPath)\nError: \(moveError)")
+            return false
+        }
+
+        return true
+    }
+
+    static public func put(_ path: String, contents: Data) -> Bool
+    {
+        let url = URL(fileURLWithPath: path)
+
+        do
+        {
+            try contents.write(to: url)
+        }
+        catch
+        {
+            return false
+        }
+
+        return true
+    }
+
+    static public func exists(_ path: String) -> Bool
+    {
+        return FileManager.default.fileExists(atPath: path)
+    }
+
+    // Surprisingly hard to do in Swift. The usual way of doing this depends on Obj-C and so its not cross-platform, so we use the multi-platform System library instead.
+    static public func isDirectory(_ path: String) -> Bool
+    {
+        guard File.exists(path) else {return false}
+
+        let filepath: FilePath = FilePath(path)
+        do
+        {
+            let fd = try FileDescriptor.open(filepath, .readOnly, options: [.directory])
+            try fd.close()
+
+            return true
+        }
+        catch
+        {
+            return false
+        }
+    }
+
+    // Like the Unix touch command, creates a file of zero length.
+    static public func touch(_ path: String) -> Bool
+    {
+        guard !File.exists(path) else {return true}
+
+        let filepath: FilePath = FilePath(path)
+        do
+        {
+            let fd = try FileDescriptor.open(filepath, .writeOnly, options: [.create], permissions: .ownerReadWrite)
+            try fd.close()
+
+            return true
+        }
+        catch
+        {
+            return false
+        }
+    }
+
+
     static public func tempFile(ext: String? = nil) throws -> URL
     {
         let temporaryDirectoryURL = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
@@ -354,6 +345,11 @@ public class File
 
             URL(fileURLWithPath: path)
         }
+    }
+
+    static public func get(_ path: String) -> Data?
+    {
+        return FileManager.default.contents(atPath: path)
     }
 }
 
