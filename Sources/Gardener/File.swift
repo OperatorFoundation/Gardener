@@ -350,9 +350,25 @@ public class File
     {
         return FileManager.default.contents(atPath: path)
     }
+
+    static public func size(_ url: URL) throws -> Int
+    {
+        guard let fileAttributes = try? FileManager.default.attributesOfItem(atPath: url.path) else
+        {
+            throw FileError.fileNotFound(url)
+        }
+
+        guard let size = fileAttributes[.size] as? Int64 else
+        {
+            throw FileError.fileNotFound(url)
+        }
+
+        return Int(size)
+    }
 }
 
 public enum FileError: Error
 {
     case couldNotCreateDirectory
+    case fileNotFound(URL)
 }
