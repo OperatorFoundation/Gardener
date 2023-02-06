@@ -10,6 +10,11 @@ import Foundation
 
 public class DO
 {
+    static public func install() -> (Int32, String, String)?
+    {
+        return Homebrew.install("doctl")
+    }
+    
     static public func auth() -> (Int32, String, String)?
     {
         let command = Command()
