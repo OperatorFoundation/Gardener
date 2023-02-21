@@ -8,11 +8,11 @@
 import Foundation
 
 public class Environment {
-    static func getEnvironmentVariable(key: String) -> String? {
+    static public func getEnvironmentVariable(key: String) -> String? {
         return ProcessInfo.processInfo.environment[key]
     }
     
-    init() {
+    public init() {
         
     }
 }
