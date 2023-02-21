@@ -164,5 +164,58 @@ final class GardenerTests: XCTestCase
         let files = File.findFiles(dir, pattern: "*.swift")
         print(files)
     }
+    
+    func testDOServerCreateAndDestroy() throws {
+        let sshKey = try SSH.loadSSHKey()
+        let server = Server(image: "ubuntu-22-10-x64", configuration: "s-1vcpu-512mb-10gb", region: "sfo3", name: "testServerGardener", sshKeys: [sshKey])
+        guard let (exitCode, _, _) = DO.install() else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssertEqual(0, exitCode)
+        
+        guard let key = Environment.getEnvironmentVariable(key: "DOCTLAUTH") else
+        {
+            XCTFail()
+            return
+        }
+        
+        guard let (exitCode2, _, _) = DO.auth(accessToken: key) else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssertEqual(0, exitCode2)
+        
+        guard let (dropletID, serverIP) = DO.create(server: server) else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssertNotNil(dropletID)
+        
+        guard let ssh = SSH(username: "root", host: serverIP, strict: false) else
+        {
+            XCTFail()
+            return
+        }
+        
+        guard let gitURL = URL(string: "https://github.com/OperatorFoundation/TransmissionLinux.git") else
+        {
+            XCTFail()
+            return
+        }
+        
+        guard ssh.gitClone(source: gitURL, branch: "main") else {
+            XCTFail()
+            return
+        }
+        
+        guard DO.delete(dropletId: dropletID) else {
+            XCTFail()
+            return
+        }
+    }
 }
 #endif

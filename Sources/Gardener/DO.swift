@@ -15,28 +15,39 @@ public class DO
         return Homebrew.install("doctl")
     }
     
-    static public func auth() -> (Int32, String, String)?
+    static public func auth(accessToken: String) -> (Int32, String, String)?
     {
         let command = Command()
-        guard let (exitCode, data, errData) = command.run("doctl", "auth", "init") else {return nil}
+        guard let (exitCode, data, errData) = command.run("doctl", "auth", "init", "--access-token", accessToken, "--interactive=false") else {return nil}
         return (exitCode, data.string, errData.string)
     }
 
-    static public func create(server: Server) -> String?
+    static public func create(server: Server) -> (String, String)?
     {
-        guard let dropletId = DO.Droplet.create(server: server) else {return nil}
-        guard let _ = DO.FloatingIP.assign(ip: server.ip, dropletId: dropletId) else
-        {
-            // FIXME: rollback droplet creation on failure?
-            return nil
+        guard let (dropletId, serverIP) = DO.Droplet.create(server: server) else {return nil}
+        if let ip = server.ip {
+            guard let _ = DO.FloatingIP.assign(ip: ip, dropletId: dropletId) else
+            {
+                // FIXME: rollback droplet creation on failure?
+                return nil
+            }
+            return (dropletId, ip)
         }
 
-        return dropletId
+        return (dropletId, serverIP)
     }
 
     static public func delete(server: Server) -> Bool
     {
-        guard let dropletId = DO.FloatingIP.getAssignment(ip: server.ip) else {return false}
+        guard let ip = server.ip else {return false}
+        guard let dropletId = DO.FloatingIP.getAssignment(ip: ip) else {return false}
+        guard let _ = DO.Droplet.delete(dropletId: dropletId) else {return false}
+
+        return true
+    }
+    
+    static public func delete(dropletId: String) -> Bool
+    {
         guard let _ = DO.Droplet.delete(dropletId: dropletId) else {return false}
 
         return true
@@ -44,15 +55,17 @@ public class DO
 
     public class Droplet
     {
-        static public func create(server: Server) -> String?
+        static public func create(server: Server) -> (dropletId: String, publicIP: String)?
         {
             let command = Command()
-            guard let (_, data, _) = command.run("doctl", "compute", "droplet", "create", "--image", server.image, "--size", server.configuration, "--region", server.region, "--enable-ipv6", "--enable-monitoring", "--enable-private-networking", "--wait", server.name) else {return nil}
-
+            guard let (_, data, _) = command.run("doctl", "compute", "droplet", "create", "--image", server.image, "--size", server.configuration, "--region", server.region, "--enable-ipv6", "--enable-monitoring", "--enable-private-networking", "--format", "ID,PublicIPv4", "--wait", server.name) else {return nil}
+            let outputString = data.string
+            print(outputString)
             guard let table = tabulate(string: data.string) else {return nil}
-            guard let dropletId = table.search(matchColumn: "Name", withValue: server.name, returnField: "ID") else {return nil}
+            let dropletId = table.columns[0].fields[0]
+            let publicIP = table.columns[1].fields[0]
 
-            return dropletId
+            return (dropletId, publicIP)
         }
 
         static public func delete(server: Server) -> (Int32, String, String)?

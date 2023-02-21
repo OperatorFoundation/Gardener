@@ -14,21 +14,19 @@ public class Plan
 
 public class Server
 {
-    let ip: String
+    let ip: String?
     let image: String
     let configuration: String
     let region: String
-    let setup: String
     let name: String
     let sshKeys: [String]
 
-    public init(ip: String, image: String, configuration: String, region: String, setup: String, name: String, sshKeys: [String] = [])
+    public init(ip: String? = nil, image: String, configuration: String, region: String, name: String, sshKeys: [String] = [])
     {
         self.ip = ip
         self.image = image
         self.configuration = configuration
         self.region = region
-        self.setup = setup
         self.name = name
         self.sshKeys = sshKeys
     }
