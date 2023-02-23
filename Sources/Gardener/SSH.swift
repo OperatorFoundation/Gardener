@@ -10,11 +10,24 @@ import Foundation
 
 public class SSH
 {
+    static public func loadSSHKey() throws -> String {
+        let sshKeyPath = File.homeDirectory().appendingPathComponent(".ssh/id_rsa.pub")
+        let sshKeyString = try String(contentsOf: sshKeyPath)
+        return sshKeyString
+    }
+    
     let remoteHost: String
+    let strictOption: String
 
     // Fails if remote host is unreachable
-    public init?(username: String, host: String, port: Int? = nil)
+    public init?(username: String, host: String, port: Int? = nil, strict: Bool = true)
     {
+        if strict {
+            self.strictOption = "StrictHostKeyChecking=yes"
+        } else {
+            self.strictOption = "StrictHostKeyChecking=no"
+        }
+        
         if let realPort = port, realPort != 22
         {
             remoteHost = "\(username)@\(host):\(realPort)"
@@ -31,7 +44,7 @@ public class SSH
         let runner = Command()
 
         print("SSH(\(remoteHost)): running remote command \"\(command)\"")
-        let maybeResult = runner.run("ssh", remoteHost, command)
+        let maybeResult = runner.run("ssh", "-o", self.strictOption, remoteHost, command)
         if let (exitCode, data, errorData) = maybeResult
         {
             print("Exit code: \(exitCode)")
@@ -84,7 +97,7 @@ public class SSH
         let runner = Command()
 
         print("SSH(\(remoteHost)): running remote command \"\(command)\"")
-        let maybeResult = runner.runWithCancellation("ssh", remoteHost, command)
+        let maybeResult = runner.runWithCancellation("ssh", "-o", self.strictOption, remoteHost, command)
 
         return maybeResult
     }

@@ -17,7 +17,8 @@ public class Command
         "/usr/bin",
         "/bin",
         "/usr/sbin",
-        "/sbin"
+        "/sbin",
+        "/opt/homebrew/bin"
     ]
     
     static public func addDefaultPath(_ item: String)

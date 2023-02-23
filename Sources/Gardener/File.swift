@@ -345,6 +345,11 @@ public class File
             URL(fileURLWithPath: path)
         }
     }
+    
+    static public func findDirectories(_ path: URL) throws -> [URL]
+    {
+        return try FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey])
+    }
 
     static public func get(_ path: String) -> Data?
     {
