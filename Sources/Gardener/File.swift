@@ -15,6 +15,12 @@ public class File
     static var pushedDirectories: [String] = []
     
     #if os(iOS) || os(watchOS) || os(tvOS)
+    static public func homeDirectory() -> URL
+    {
+        let documentDirectories = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        
+        return documentDirectories[0]
+    }
     #else
     static public func cd(_ path: String) -> Bool
     {
