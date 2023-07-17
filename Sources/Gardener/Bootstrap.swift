@@ -4,8 +4,7 @@
 //
 //  Created by Dr. Brandon Wiley on 12/9/20.
 //
-#if os(iOS) || os(watchOS) || os(tvOS)
-#else
+
 import Foundation
 
 public struct SwiftVersion
@@ -13,12 +12,15 @@ public struct SwiftVersion
     public let url: URL
     public let dirName: String
     public let tarName: String
-    public let digest: String
+    public let digest: String?
     public let versionString: String
     public let dependencies: [String]
+    public let ubuntuVersion: String
 
-    public init?(swiftVersion: String, ubuntuVersion: String, digest: String)
+    public init?(swiftVersion: String, ubuntuVersion: String, digest: String? = nil)
     {
+        self.ubuntuVersion = ubuntuVersion
+
         let ubuntuParts = ubuntuVersion.split(separator: ".")
         guard ubuntuParts.count == 2 else {return nil}
         let ubuntuMajor = ubuntuParts[0]
@@ -84,8 +86,104 @@ public struct SwiftVersion
                     "tzdata",
                     "zlib1g-dev",
                 ]
+            case "22.04":
+                self.dependencies = [
+                    "binutils",
+                    "git",
+                    "gnupg2",
+                    "libc6-dev",
+                    "libcurl4-openssl-dev",
+                    "libedit2",
+                    "libgcc-9-dev",
+                    "libpython3.8",
+                    "libsqlite3-0",
+                    "libstdc++-9-dev",
+                    "libxml2-dev",
+                    "libz3-dev",
+                    "pkg-config",
+                    "tzdata",
+                    "unzip",
+                    "zlib1g-dev",
+                ]
+            case "22.10":
+                self.dependencies = [
+                    "binutils",
+                    "git",
+                    "gnupg2",
+                    "libc6-dev",
+                    "libcurl4-openssl-dev",
+                    "libedit2",
+                    "libgcc-9-dev",
+                    "libpython3.8",
+                    "libsqlite3-0",
+                    "libstdc++-9-dev",
+                    "libxml2-dev",
+                    "libz3-dev",
+                    "pkg-config",
+                    "tzdata",
+                    "unzip",
+                    "zlib1g-dev",
+                ]
             default:
                 return nil
+        }
+    }
+
+    public func bootstrap(username: String, host: String, port: Int? = nil, packages: [String]? = nil) throws
+    {
+        guard let ssh = SSH(username: username, host: host, port: port) else
+        {
+            throw BootstrapError.sshFailed
+        }
+
+        guard let ubuntuVersion = ssh.lsb_release() else
+        {
+            throw BootstrapError.couldNotGetUbuntuVersion
+        }
+
+        guard ubuntuVersion == self.ubuntuVersion else
+        {
+            throw BootstrapError.ubuntuVersionMismatch(ubuntuVersion, self.ubuntuVersion)
+        }
+
+        if ssh.swiftVersion(path: "/root/\(self.dirName)/usr/bin") != self.versionString
+        {
+            let _ = ssh.update()
+
+            for dependency in self.dependencies
+            {
+                let _ = ssh.install(package: dependency)
+            }
+
+            let _ = ssh.download(url: self.url, outputFilename: self.tarName, sha1sum: self.digest)
+
+            if ssh.fileExists(path: self.dirName)
+            {
+                let _ = ssh.rm(path: self.dirName, force: true)
+            }
+            let _ = ssh.untargzip(path: self.tarName)
+
+            let _ = ssh.append(path: ".bashrc", string: "export PATH=\"${PATH}:/root/\(self.dirName)/usr/bin\"")
+
+            guard let reportedVersion = ssh.swiftVersion(path: "/root/\(self.dirName)/usr/bin") else
+            {
+                throw BootstrapError.couldNotGetSwiftVersion
+            }
+
+            guard reportedVersion == self.versionString else
+            {
+                print("\n Unable to continue:")
+                print("\(reportedVersion) does not equal \(self.versionString)")
+                throw BootstrapError.swiftVersionMismatch(reportedVersion, self.versionString)
+            }
+        }
+
+        if let installPackages = packages
+        {
+            for installPackage in installPackages
+            {
+                let _ = ssh.install(package: installPackage)
+            }
         }
     }
 }
@@ -173,4 +271,12 @@ public class Bootstrap
         return true
     }
 }
-#endif
+
+public enum BootstrapError: Error
+{
+    case sshFailed
+    case couldNotGetUbuntuVersion
+    case couldNotGetSwiftVersion
+    case ubuntuVersionMismatch(String, String) // actual, expecuted
+    case swiftVersionMismatch(String, String) // actual, expecuted
+}
