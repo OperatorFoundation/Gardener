@@ -5,6 +5,8 @@
 //  Created by Dr. Brandon Wiley on 12/9/20.
 //
 
+#if os(iOS) || os(watchOS) || os(tvOS)
+#else
 import Foundation
 
 public struct SwiftVersion
@@ -280,3 +282,4 @@ public enum BootstrapError: Error
     case ubuntuVersionMismatch(String, String) // actual, expecuted
     case swiftVersionMismatch(String, String) // actual, expecuted
 }
+#endif
