@@ -20,7 +20,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.3"),
-        .package(url: "https://github.com/apple/swift-system", from: "1.1.1"),
+        .package(url: "https://github.com/apple/swift-system", from: "1.2.1"),
 
         .package(url: "https://github.com/OperatorFoundation/Chord.git", branch: "main"),
         .package(url: "https://github.com/OperatorFoundation/Datable", branch: "main"),
