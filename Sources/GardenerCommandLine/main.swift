@@ -47,9 +47,9 @@ extension GardenerCommandLine
 
         func bootstrapSwift(host: String, ubuntuVersion: String) throws
         {
-            guard let swiftVersion = SwiftVersion(swiftVersion: "5.7.3", ubuntuVersion: ubuntuVersion) else
+            guard let swiftVersion = SwiftVersion(swiftVersion: "5.8.1", ubuntuVersion: ubuntuVersion) else
             {
-                throw GardenerCommandLineError.unsupportedSwiftUbuntuVersionCombination("5.7.3", ubuntuVersion)
+                throw GardenerCommandLineError.unsupportedSwiftUbuntuVersionCombination("5.8.1", ubuntuVersion)
             }
 
             try swiftVersion.bootstrap(username: "root", host: host)
