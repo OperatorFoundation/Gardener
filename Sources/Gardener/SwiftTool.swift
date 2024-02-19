@@ -9,7 +9,7 @@
 import Foundation
 import Datable
 
-public class Swift
+public class SwiftTool
 {
     var command: Command
     
