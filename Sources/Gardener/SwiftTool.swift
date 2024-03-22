@@ -9,7 +9,7 @@
 import Foundation
 import Datable
 
-public class Swift
+public class SwiftTool
 {
     var command: Command
     
@@ -59,32 +59,32 @@ public class Swift
         return command.cd(path)
     }
     
-    public func initialize() -> (Int32, Data, Data)?
+    public func initialize() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "package", "init")
     }
     
-    public func update() -> (Int32, Data, Data)?
+    public func update() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "package", "update")
     }
     
-    public func generate() -> (Int32, Data, Data)?
+    public func generate() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "package", "generate-xcodeproj")
     }
     
-    public func build() -> (Int32, Data, Data)?
+    public func build() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "build")
     }
     
-    public func test() -> (Int32, Data, Data)?
+    public func test() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "test")
     }
     
-    public func run() -> (Int32, Data, Data)?
+    public func run() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "run")
     }
