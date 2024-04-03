@@ -307,6 +307,26 @@ public class File
         return temporaryFileURL
     }
 
+    static public func tempDirectory() throws -> URL
+    {
+        let temporaryDirectoryBaseURL = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+
+        let temporaryName = ProcessInfo.processInfo.globallyUniqueString
+
+        let temporaryDirectoryURL = temporaryDirectoryBaseURL.appendingPathComponent(temporaryName)
+
+        if !File.exists(temporaryDirectoryURL.path)
+        {
+            guard File.makeDirectory(url: temporaryDirectoryURL) else
+            {
+                throw FileError.couldNotCreateDirectory
+            }
+        }
+
+        return temporaryDirectoryURL
+    }
+
+
     static public func cacheableFile(directory: String? = nil, name: String) throws -> URL
     {
         var temporaryDirectoryURL = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
