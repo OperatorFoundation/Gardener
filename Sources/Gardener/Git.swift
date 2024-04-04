@@ -34,14 +34,42 @@ public class Git
         return command.run("git", "checkout", branch)
     }
     
-    public func pull(_ remote: String, _ branch: String) -> (Int32, Data, Data)?
+    public func pull(_ remote: String? = nil, _ branch: String? = nil) -> (Int32, Data, Data)?
     {
-        return command.run("git", "pull", remote, branch)
+        if let remote
+        {
+            if let branch
+            {
+                return command.run("git", "pull", remote, branch)
+            }
+            else
+            {
+                return command.run("git", "pull", remote)
+            }
+        }
+        else
+        {
+            return command.run("git", "pull")
+        }
     }
     
-    public func push(_ remote: String, _ branch: String) -> (Int32, Data, Data)?
+    public func push(_ remote: String?, _ branch: String?) -> (Int32, Data, Data)?
     {
-        return command.run("git", "push", remote, branch)
+        if let remote
+        {
+            if let branch
+            {
+                return command.run("git", "push", remote, branch)
+            }
+            else
+            {
+                return command.run("git", "push", remote)
+            }
+        }
+        else
+        {
+            return command.run("git", "push")
+        }
     }
     
     public func addRemote(_ name: String, _ path: String) -> (Int32, Data, Data)?
