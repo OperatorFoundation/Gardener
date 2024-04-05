@@ -32,7 +32,7 @@ public class Application
         }
     }
 
-    static public func installFromSource(path: String, language: Language, source: URL, branch: String)
+    static public func installFromSource(path: String, language: Language, source: URL, branch: String) throws
     {
         let git = Git()
         let _ = File.cd(path)
@@ -45,8 +45,8 @@ public class Application
         {
             print(FileManager.default.currentDirectoryPath)
             let _ = File.cd(packageName)
-            let _ = git.checkout(branch)
-            let _ = git.pull("origin", branch)
+            try git.checkout(branch)
+            try git.pull("origin", branch)
         }
         else
         {

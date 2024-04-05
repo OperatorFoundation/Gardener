@@ -118,8 +118,11 @@ public class SwiftTool
             return nil
         }
         
-        guard let _ = git.checkout(branch)
-        else
+        do
+        {
+            try git.checkout(branch)
+        }
+        catch
         {
             print("Unable to checkout \(branch) branch.")
             return nil
