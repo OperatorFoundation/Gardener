@@ -100,11 +100,19 @@ public class SwiftTool
         return command.run("swift", "test")
     }
     
-    public func run() -> (exitCode: Int32, resultData: Data, errorData: Data)?
+    public func run() throws
     {
-        return command.run("swift", "run")
+        guard let (errorCode, stdout, stderr) = command.run("swift", "run") else
+        {
+            throw SwiftError.commandNotFound
+        }
+
+        guard errorCode == 0 else
+        {
+            throw SwiftError.commandFailed(errorCode, stdout.string, stderr.string)
+        }
     }
-    
+
     /// Clones repository, checks out the correct branch, and builds
     /// Returns: The path to the built target
     public func buildFromRepository(repositoryPath: String, branch: String, target: String) -> String?
