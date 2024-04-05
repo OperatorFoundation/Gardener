@@ -64,21 +64,37 @@ public class SwiftTool
         return command.run("swift", "package", "init")
     }
     
-    public func update() -> (exitCode: Int32, resultData: Data, errorData: Data)?
+    public func update() throws
     {
-        return command.run("swift", "package", "update")
+        guard let (errorCode, stdout, stderr) = command.run("swift", "package", "update") else
+        {
+            throw SwiftError.commandNotFound
+        }
+
+        guard errorCode == 0 else
+        {
+            throw SwiftError.commandFailed(errorCode, stdout.string, stderr.string)
+        }
     }
-    
+
     public func generate() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "package", "generate-xcodeproj")
     }
     
-    public func build() -> (exitCode: Int32, resultData: Data, errorData: Data)?
+    public func build() throws
     {
-        return command.run("swift", "build")
+        guard let (errorCode, stdout, stderr) = command.run("swift", "build") else
+        {
+            throw SwiftError.commandNotFound
+        }
+
+        guard errorCode == 0 else
+        {
+            throw SwiftError.commandFailed(errorCode, stdout.string, stderr.string)
+        }
     }
-    
+
     public func test() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "test")
@@ -128,8 +144,11 @@ public class SwiftTool
             return nil
         }
         
-        guard let _ = build()
-        else
+        do
+        {
+            try build()
+        }
+        catch
         {
             print("Failed to build \(repositoryName)")
             return nil
@@ -145,5 +164,11 @@ public class SwiftTool
         
         return targetPath
     }
+}
+
+public enum SwiftError: Error
+{
+    case commandNotFound
+    case commandFailed(Int32, String, String)
 }
 #endif

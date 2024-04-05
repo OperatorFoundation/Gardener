@@ -61,7 +61,7 @@ public class Application
                 let _ = go.build()
             case .swift:
                 guard let swift = SwiftTool() else {return}
-                let _ = swift.build()
+                try swift.build()
         }
     }
 }
