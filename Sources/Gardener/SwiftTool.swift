@@ -102,6 +102,11 @@ public class SwiftTool
     
     public func run(_ target: String? = nil, arguments: String ...) throws
     {
+        try self.run(target, arguments: arguments)
+    }
+
+    public func run(_ target: String? = nil, arguments: [String]) throws
+    {
         let runArguments: [String]
         if let target
         {
