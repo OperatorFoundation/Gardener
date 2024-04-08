@@ -100,9 +100,24 @@ public class SwiftTool
         return command.run("swift", "test")
     }
     
-    public func run() throws
+    public func run(_ target: String? = nil, arguments: String ...) throws
     {
-        guard let (errorCode, stdout, stderr) = command.run("swift", "run") else
+        let runArguments: [String]
+        if let target
+        {
+            runArguments = ["run", target] + arguments
+        }
+        else
+        {
+            guard arguments.isEmpty else
+            {
+                throw SwiftError.runArgumentsRequiresTarget
+            }
+
+            runArguments = ["run"]
+        }
+
+        guard let (errorCode, stdout, stderr) = command.run("swift", runArguments) else
         {
             throw SwiftError.commandNotFound
         }
@@ -176,6 +191,7 @@ public class SwiftTool
 
 public enum SwiftError: Error
 {
+    case runArgumentsRequiresTarget
     case commandNotFound
     case commandFailed(Int32, String, String)
 }
