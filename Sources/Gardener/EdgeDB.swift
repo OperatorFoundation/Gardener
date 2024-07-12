@@ -78,14 +78,44 @@ public class EdgeDBMigration
         self.command = command
     }
 
-    public func create() -> (Int32, Data, Data)?
+    public func create() throws
     {
-        return self.command.run("edgedb", "migration", "create")
+        guard let (errorCode, _, _) = self.command.run("edgedb", "migration", "create", "--no-interactive") else
+        {
+            throw EdgeDBError.commandFailed
+        }
+
+        switch errorCode
+        {
+            case 0:
+                return
+
+            case 1:
+                throw EdgeDBError.generalError
+
+            case 4:
+                throw EdgeDBMigrationError.noChangesDetected
+
+            default:
+                throw EdgeDBError.unknownErrorCode(errorCode)
+        }
     }
 
-    public func apply() -> (Int32, Data, Data)?
+    public func apply() throws
     {
-        return self.command.run("edgedb", "migration", "apply")
+        guard let (errorCode, _, _) = self.command.run("edgedb", "migration", "apply") else
+        {
+            throw EdgeDBError.commandFailed
+        }
+
+        switch errorCode
+        {
+            case 0:
+                return
+
+            default:
+                throw EdgeDBError.unknownErrorCode(errorCode)
+        }
     }
 
     public func status() -> (Int32, Data, Data)?
@@ -146,5 +176,13 @@ public struct EdgeDBOptions
 public enum EdgeDBError: Error
 {
     case unknownDatabaseDirectory
+    case commandFailed
+    case unknownErrorCode(Int32)
+    case generalError
+}
+
+public enum EdgeDBMigrationError: Error
+{
+    case noChangesDetected
 }
 #endif
