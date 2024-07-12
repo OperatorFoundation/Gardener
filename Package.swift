@@ -25,6 +25,8 @@ let package = Package(
         .package(url: "https://github.com/OperatorFoundation/Chord", branch: "main"),
         .package(url: "https://github.com/OperatorFoundation/Datable", branch: "main"),
         .package(url: "https://github.com/Bouke/Glob", from: "1.0.5"),
+        .package(url: "https://github.com/OperatorFoundation/SwiftHexTools", branch: "main"),
+        .package(url: "https://github.com/OperatorFoundation/TransmissionAsync", branch: "main"),
         .package(url: "https://github.com/nerdishbynature/octokit.swift", from: "0.12.0"),
     ],
     targets: [
@@ -39,6 +41,7 @@ let package = Package(
                 "Chord",
                 "Datable",
                 "Glob",
+                "TransmissionAsync",
             ]),
         .executableTarget(
             name: "GardenerCommandLine",
@@ -50,7 +53,11 @@ let package = Package(
         ),
         .testTarget(
             name: "GardenerTests",
-            dependencies: ["Gardener"]),
+            dependencies: [
+                "Gardener",
+                "SwiftHexTools",
+            ]
+        ),
     ],
     swiftLanguageVersions: [.v5]
 )

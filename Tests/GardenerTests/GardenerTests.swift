@@ -1,6 +1,8 @@
 #if os(macOS)
 import XCTest
 @testable import Gardener
+import SwiftHexTools
+import Logging
 
 final class GardenerTests: XCTestCase
 {
@@ -215,6 +217,64 @@ final class GardenerTests: XCTestCase
         guard DO.delete(dropletId: dropletID) else {
             XCTFail()
             return
+        }
+    }
+
+    func testSox()
+    {
+        let config = SoxConfig(
+            globalOptions: [],
+            inputOptions: [],
+            inputFile: .filename("/Users/dr.brandonwiley/test.wav"),
+            outputOptions: [],
+            outputFile: .filename("/Users/dr.brandonwiley/output.wav")
+        )
+
+        let sox = Sox()
+        guard let (result, _, _) = sox.run(config) else
+        {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(result, 0)
+    }
+
+    func testTransmissionSox() async throws
+    {
+        let configMic = SoxConfig(
+            globalOptions: [],
+            inputOptions: [],
+            inputFile: .defaultDevice,
+            outputOptions: [],
+            outputFile: .soxPipe
+        )
+
+        let configSpeaker = SoxConfig(
+            globalOptions: [],
+            inputOptions: [],
+            inputFile: .soxPipe,
+            outputOptions: [],
+            outputFile: .defaultDevice
+        )
+
+        let logger = Logger(label: "testTransmissionSox")
+
+        let sox = Sox()
+        let reader = try sox.openForReading(configMic, logger)
+        let writer = try sox.openForWriting(configSpeaker, logger)
+
+        print("opened")
+
+        var data: Data = Data()
+        while true
+        {
+            data = try await reader.read()
+
+            if data.count > 0
+            {
+                try await writer.write(data)
+            }
         }
     }
 }
