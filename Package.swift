@@ -23,11 +23,11 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-system", from: "1.2.1"),
         
         .package(url: "https://github.com/Bouke/Glob", from: "1.0.5"),
-        .package(url: "https://github.com/OperatorFoundation/SwiftHexTools", branch: "main"),
-        .package(url: "https://github.com/OperatorFoundation/TransmissionAsync", branch: "main"),
+        .package(url: "https://github.com/OperatorFoundation/SwiftHexTools", from: "1.2.6"),
+        .package(url: "https://github.com/OperatorFoundation/TransmissionAsync", from: "0.1.6"),
         .package(url: "https://github.com/nerdishbynature/octokit.swift", from: "0.12.0"),
         
-        .package(url: "https://github.com/OperatorFoundation/Chord", from: "0.1.4"),
+        .package(url: "https://github.com/OperatorFoundation/Chord", from: "0.1.6"),
         .package(url: "https://github.com/OperatorFoundation/Datable", from: "4.0.1"),
     ],
     targets: [
