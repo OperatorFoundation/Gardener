@@ -1,4 +1,4 @@
-// swift-tools-version:5.8
+// swift-tools-version:5.10
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "Gardener",
     platforms: [
-        .macOS(.v13),
+        .macOS(.v14),
         .iOS(.v16)
    ],
     products: [
@@ -23,6 +23,8 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-system", from: "1.2.1"),
         
         .package(url: "https://github.com/Bouke/Glob", from: "1.0.5"),
+        .package(url: "https://github.com/OperatorFoundation/SwiftHexTools", branch: "main"),
+        .package(url: "https://github.com/OperatorFoundation/TransmissionAsync", branch: "main"),
         .package(url: "https://github.com/nerdishbynature/octokit.swift", from: "0.12.0"),
         
         .package(url: "https://github.com/OperatorFoundation/Chord", from: "0.1.4"),
@@ -40,6 +42,7 @@ let package = Package(
                 "Chord",
                 "Datable",
                 "Glob",
+                "TransmissionAsync",
             ]),
         .executableTarget(
             name: "GardenerCommandLine",
@@ -51,7 +54,11 @@ let package = Package(
         ),
         .testTarget(
             name: "GardenerTests",
-            dependencies: ["Gardener"]),
+            dependencies: [
+                "Gardener",
+                "SwiftHexTools",
+            ]
+        ),
     ],
     swiftLanguageVersions: [.v5]
 )

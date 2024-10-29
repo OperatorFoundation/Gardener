@@ -64,31 +64,75 @@ public class SwiftTool
         return command.run("swift", "package", "init")
     }
     
-    public func update() -> (exitCode: Int32, resultData: Data, errorData: Data)?
+    public func update() throws
     {
-        return command.run("swift", "package", "update")
+        guard let (errorCode, stdout, stderr) = command.run("swift", "package", "update") else
+        {
+            throw SwiftError.commandNotFound
+        }
+
+        guard errorCode == 0 else
+        {
+            throw SwiftError.commandFailed(errorCode, stdout.string, stderr.string)
+        }
     }
-    
+
     public func generate() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "package", "generate-xcodeproj")
     }
     
-    public func build() -> (exitCode: Int32, resultData: Data, errorData: Data)?
+    public func build() throws
     {
-        return command.run("swift", "build")
+        guard let (errorCode, stdout, stderr) = command.run("swift", "build") else
+        {
+            throw SwiftError.commandNotFound
+        }
+
+        guard errorCode == 0 else
+        {
+            throw SwiftError.commandFailed(errorCode, stdout.string, stderr.string)
+        }
     }
-    
+
     public func test() -> (exitCode: Int32, resultData: Data, errorData: Data)?
     {
         return command.run("swift", "test")
     }
     
-    public func run() -> (exitCode: Int32, resultData: Data, errorData: Data)?
+    public func run(_ target: String? = nil, arguments: String ...) throws
     {
-        return command.run("swift", "run")
+        try self.run(target, arguments: arguments)
     }
-    
+
+    public func run(_ target: String? = nil, arguments: [String]) throws
+    {
+        let runArguments: [String]
+        if let target
+        {
+            runArguments = ["run", target] + arguments
+        }
+        else
+        {
+            guard arguments.isEmpty else
+            {
+                throw SwiftError.runArgumentsRequiresTarget
+            }
+
+            runArguments = ["run"]
+        }
+
+        guard let (errorCode, stdout, stderr) = command.run("swift", runArguments) else
+        {
+            throw SwiftError.commandNotFound
+        }
+
+        guard errorCode == 0 else
+        {
+            throw SwiftError.commandFailed(errorCode, stdout.string, stderr.string)
+        }
+    }
+
     /// Clones repository, checks out the correct branch, and builds
     /// Returns: The path to the built target
     public func buildFromRepository(repositoryPath: String, branch: String, target: String) -> String?
@@ -118,15 +162,21 @@ public class SwiftTool
             return nil
         }
         
-        guard let _ = git.checkout(branch)
-        else
+        do
+        {
+            try git.checkout(branch)
+        }
+        catch
         {
             print("Unable to checkout \(branch) branch.")
             return nil
         }
         
-        guard let _ = build()
-        else
+        do
+        {
+            try build()
+        }
+        catch
         {
             print("Failed to build \(repositoryName)")
             return nil
@@ -142,5 +192,12 @@ public class SwiftTool
         
         return targetPath
     }
+}
+
+public enum SwiftError: Error
+{
+    case runArgumentsRequiresTarget
+    case commandNotFound
+    case commandFailed(Int32, String, String)
 }
 #endif

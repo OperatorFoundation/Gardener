@@ -280,6 +280,73 @@ public class Command
 
         return Cancellable(process: process, stdoutHandle: stdoutPipe.fileHandleForReading, stderrHandle: stderrPipe.fileHandleForReading)
     }
+
+    public func runWithPipes(_ command: String, _ args: String...) -> CancellablePipes?
+    {
+        return self.runWithPipes(command, args)
+    }
+
+    public func runWithPipes(_ command: String, _ args: [String]) -> CancellablePipes?
+    {
+        guard command.count > 0
+        else
+        {
+            print("Run command failed. We couldn't understand the command \(command)")
+            return nil
+        }
+
+        var absolutePath = command
+
+        var pathFound = false
+        if command.first! != "/"
+        {
+            for attempt in path
+            {
+                absolutePath = attempt + "/" + command
+                if FileManager.default.fileExists(atPath: absolutePath)
+                {
+                    pathFound = true
+                    break
+                }
+            }
+        }
+        else
+        {
+            pathFound = true
+        }
+
+        guard pathFound
+        else
+        {
+            print("\nRun command failed. Path not found.")
+            print("Path: \(path)")
+            print("Command: \(command)")
+            return nil
+        }
+
+        let stdinPipe = Pipe()
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        let process = Process.init()
+        process.executableURL = URL(fileURLWithPath: absolutePath)
+        process.arguments = args
+        process.standardInput = stdinPipe
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+        process.currentDirectoryURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+
+        do
+        {
+            try process.run()
+        }
+        catch
+        {
+            return nil
+        }
+
+        return CancellablePipes(process: process, stdinHandle: stdinPipe.fileHandleForWriting , stdoutHandle: stdoutPipe.fileHandleForReading, stderrHandle: stderrPipe.fileHandleForReading)
+    }
+
 }
 
 public class Cancellable
@@ -347,4 +414,39 @@ public class Cancellable
         return self.wait()
     }
 }
+
+public class CancellablePipes
+{
+    let process: Process
+
+    var stdinHandle: FileHandle
+    var stdoutHandle: FileHandle
+    var stderrHandle: FileHandle
+
+    public init(process: Process, stdinHandle: FileHandle, stdoutHandle: FileHandle, stderrHandle: FileHandle)
+    {
+        self.process = process
+        self.stdinHandle = stdinHandle
+        self.stdoutHandle = stdoutHandle
+        self.stderrHandle = stderrHandle
+    }
+
+    public func wait() -> Int32?
+    {
+        self.process.waitUntilExit()
+        return self.process.terminationStatus
+    }
+
+    public func cancel() -> Int32?
+    {
+        self.process.interrupt()
+        if process.isRunning
+        {
+            process.terminate()
+        }
+
+        return self.wait()
+    }
+}
+
 #endif

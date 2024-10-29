@@ -8,6 +8,8 @@
 #else
 import Foundation
 
+import Datable
+
 // https://git-scm.com/docs/git-status
 
 public class Git
@@ -29,19 +31,66 @@ public class Git
         return command.run("git", "clone", path)
     }
 
-    public func checkout(_ branch: String) -> (Int32, Data, Data)?
+    public func checkout(_ branch: String) throws
     {
-        return command.run("git", "checkout", branch)
+        guard let (errorCode, stdout, stderr) = command.run("git", "checkout", branch) else
+        {
+            throw GitError.commandNotFound
+        }
+
+        guard errorCode == 0 else
+        {
+            throw GitError.commandFailed(errorCode, stdout.string, stderr.string)
+        }
     }
     
-    public func pull(_ remote: String, _ branch: String) -> (Int32, Data, Data)?
+    public func pull(_ remote: String? = nil, _ branch: String? = nil) throws
     {
-        return command.run("git", "pull", remote, branch)
+        let result: (Int32, Data, Data)?
+        if let remote
+        {
+            if let branch
+            {
+                result = command.run("git", "pull", remote, branch)
+            }
+            else
+            {
+                result = command.run("git", "pull", remote)
+            }
+        }
+        else
+        {
+            result = command.run("git", "pull")
+        }
+
+        guard let (errorCode, stdout, stderr) = result else
+        {
+            throw GitError.commandNotFound
+        }
+
+        guard errorCode == 0 else
+        {
+            throw GitError.commandFailed(errorCode, stdout.string, stderr.string)
+        }
     }
     
-    public func push(_ remote: String, _ branch: String) -> (Int32, Data, Data)?
+    public func push(_ remote: String?, _ branch: String?) -> (Int32, Data, Data)?
     {
-        return command.run("git", "push", remote, branch)
+        if let remote
+        {
+            if let branch
+            {
+                return command.run("git", "push", remote, branch)
+            }
+            else
+            {
+                return command.run("git", "push", remote)
+            }
+        }
+        else
+        {
+            return command.run("git", "push")
+        }
     }
     
     public func addRemote(_ name: String, _ path: String) -> (Int32, Data, Data)?
@@ -133,6 +182,8 @@ public enum GitFileStatus: String
 
 public enum GitError: Error
 {
+    case commandFailed(Int32, String, String)
+    case commandNotFound
     case invalidStatusCombination(GitFileStatus, GitFileStatus)
     case badFileStatus(String)
     case badStatus(String)
